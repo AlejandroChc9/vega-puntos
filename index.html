@@ -1,0 +1,957 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-VKY4hdsfO6+iTm7ZHpGCD7eP3d0Sjk49ERsy5cNCszs='; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src https://cotifawudlwgkcxksngl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Cabina Vega Puntos</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --navy: #122a54;
+      --navy-2: #1c3f78;
+      --blue: #2563eb;
+      --red: #ed1c24;
+      --red-dark: #b90e18;
+      --gold: #ffbd17;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #dce3ee;
+      --surface: #ffffff;
+      --surface-2: #f4f7fb;
+      --green: #15803d;
+      --green-soft: #dcfce7;
+      --amber: #b45309;
+      --amber-soft: #fef3c7;
+      --rose-soft: #ffe4e6;
+      --shadow: 0 12px 32px rgba(18, 42, 84, .10);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      min-width: 320px;
+      background: var(--surface-2);
+      color: var(--ink);
+      font-family: Bahnschrift, "Segoe UI", Arial, sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+    button, input, select { font: inherit; }
+    button, select { cursor: pointer; }
+    button:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, .35);
+      outline-offset: 2px;
+    }
+    .app { min-height: 100vh; }
+    .hero {
+      position: relative;
+      overflow: hidden;
+      color: white;
+      background:
+        radial-gradient(circle at 92% 12%, rgba(255, 189, 23, .36), transparent 25%),
+        linear-gradient(122deg, #081a3d 0%, var(--navy) 46%, #9f0b17 100%);
+      border-bottom: 5px solid var(--gold);
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -150px;
+      bottom: -230px;
+      border: 42px solid rgba(255, 255, 255, .08);
+      border-radius: 50%;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      width: min(1480px, calc(100% - 40px));
+      margin: auto;
+      padding: 22px 0 20px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+    }
+    .brand { display: flex; gap: 15px; align-items: center; }
+    .brand > div:last-child { min-width: 0; }
+    .brand p { overflow-wrap: anywhere; }
+    .brand-mark {
+      width: 58px;
+      height: 58px;
+      display: grid;
+      place-items: center;
+      border-radius: 18px;
+      color: var(--navy);
+      background: linear-gradient(145deg, #fff9dc, var(--gold));
+      box-shadow: 0 10px 22px rgba(0, 0, 0, .2);
+      font-size: 24px;
+      font-weight: 900;
+      letter-spacing: -2px;
+    }
+    .eyebrow { margin: 0 0 3px; color: #ffe58e; font-size: 12px; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; }
+    h1 { margin: 0; font-size: clamp(27px, 4vw, 43px); line-height: 1; letter-spacing: -.04em; }
+    .brand p:last-child { margin: 7px 0 0; color: #dce8ff; font-size: 14px; }
+    .hero-meta { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 9px; }
+    .meta-chip {
+      min-width: 142px;
+      padding: 9px 12px;
+      border: 1px solid rgba(255, 255, 255, .25);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, .10);
+      backdrop-filter: blur(8px);
+    }
+    .meta-chip span { display: block; color: #ccdbf5; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    .meta-chip strong { display: block; margin-top: 3px; font-size: 15px; }
+    .security-strip {
+      position: relative;
+      z-index: 1;
+      padding: 8px 20px;
+      text-align: center;
+      background: rgba(0, 0, 0, .24);
+      color: #f7dfdf;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .shell { width: min(1480px, calc(100% - 40px)); margin: 0 auto; padding: 22px 0 36px; }
+    .source-alert {
+      display: none;
+      margin-bottom: 16px;
+      padding: 13px 16px;
+      border: 1px solid #fbbf24;
+      border-radius: 14px;
+      background: var(--amber-soft);
+      color: #78350f;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .source-alert.visible { display: block; }
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      align-items: end;
+      margin: 0 0 12px;
+    }
+    .section-heading h2 { margin: 0; font-size: 21px; letter-spacing: -.02em; }
+    .section-heading p { margin: 3px 0 0; color: var(--muted); font-size: 13px; }
+    .section-heading .view-note { text-align: right; }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+    .kpi {
+      position: relative;
+      min-height: 126px;
+      padding: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 6px 18px rgba(18, 42, 84, .06);
+    }
+    .kpi::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 5px; background: var(--navy); }
+    .kpi.accent-red::before { background: var(--red); }
+    .kpi.accent-gold::before { background: var(--gold); }
+    .kpi.accent-green::before { background: var(--green); }
+    .kpi .label { color: var(--muted); font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .055em; }
+    .kpi .value { margin-top: 11px; color: var(--navy); font-size: clamp(26px, 3vw, 36px); font-weight: 900; line-height: 1; }
+    .kpi .pair { display: flex; align-items: baseline; gap: 7px; }
+    .kpi .pair small { color: var(--muted); font-size: 13px; font-weight: 700; }
+    .kpi .note { margin-top: 10px; color: var(--muted); font-size: 12px; line-height: 1.35; }
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: var(--shadow);
+    }
+    .filters-panel { padding: 17px; margin-bottom: 18px; }
+    .filter-top { display: flex; justify-content: space-between; align-items: center; gap: 15px; margin-bottom: 13px; }
+    .filter-top strong { font-size: 15px; color: var(--navy); }
+    .reset-button, .export-button, .ghost-button, .page-button {
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: white;
+      color: var(--navy);
+      font-weight: 800;
+      padding: 8px 12px;
+    }
+    .reset-button:hover, .ghost-button:hover, .page-button:hover { background: #edf3ff; }
+    .export-button { border-color: var(--navy); background: var(--navy); color: white; }
+    .export-button:hover { background: var(--navy-2); }
+    .filter-grid {
+      display: grid;
+      grid-template-columns: 1.3fr repeat(7, minmax(112px, 1fr));
+      gap: 10px;
+    }
+    .field { min-width: 0; }
+    .field > span { display:block; margin-bottom:5px; color:var(--muted); font-size:11px; font-weight:800; text-transform:uppercase; }
+    .field .multi-filter { position:relative; padding:0; border:1px solid #cbd5e1; border-radius:10px; background:white; }
+    .multi-filter summary { padding:11px 10px; font-size:12px; min-height:40px; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .multi-filter[open] summary { color:var(--navy); font-weight:800; }
+    .multi-filter summary:focus-visible { outline:3px solid #bfdbfe; outline-offset:2px; }
+    .multi-filter > div { position:absolute; z-index:20; top:100%; left:0; min-width:220px; padding:10px; background:white; border:1px solid #cbd5e1; border-radius:10px; box-shadow:0 8px 20px #00194622; }
+    .multi-filter label { display:flex; align-items:center; gap:8px; padding:7px 2px; cursor:pointer; }
+    .multi-filter input[type="checkbox"] { width:16px; min-height:16px; height:16px; flex-shrink:0; accent-color:var(--navy); }
+    .field label { display: block; margin: 0 0 5px; color: var(--muted); font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
+    .field input, .field select {
+      width: 100%;
+      min-height: 42px;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: white;
+      color: var(--ink);
+      padding: 8px 10px;
+    }
+    .field input::placeholder { color: #94a3b8; }
+    .quick-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .quick-filter {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #f8fafc;
+      color: var(--muted);
+      padding: 7px 12px;
+      font-size: 12px;
+      font-weight: 800;
+    }
+    .quick-filter.active { border-color: var(--navy); background: var(--navy); color: white; }
+    .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 18px; }
+    .insight-card { padding: 18px; }
+    .insight-card h3 { margin: 0; color: var(--navy); font-size: 16px; }
+    .insight-card > p { margin: 4px 0 14px; color: var(--muted); font-size: 12px; }
+    .bar-row { display: grid; grid-template-columns: 150px 1fr 62px; gap: 10px; align-items: center; margin: 10px 0; }
+    .bar-row .name { color: var(--ink); font-size: 12px; font-weight: 700; }
+    .bar-track { height: 10px; overflow: hidden; border-radius: 999px; background: #e9eef6; }
+    .bar-fill { height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg, var(--navy-2), var(--blue)); }
+    .bar-row:nth-child(4) .bar-fill { background: linear-gradient(90deg, #b45309, var(--gold)); }
+    .bar-row:nth-child(5) .bar-fill { background: linear-gradient(90deg, var(--red-dark), var(--red)); }
+    .bar-value { text-align: right; color: var(--navy); font-size: 12px; font-weight: 900; }
+    .action-line {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #edf1f6;
+    }
+    .action-line:last-child { border-bottom: 0; }
+    .action-line strong { display: block; font-size: 13px; }
+    .action-line small { color: var(--muted); }
+    .action-line .count { color: var(--navy); font-size: 19px; font-weight: 900; }
+    .table-panel { overflow: hidden; }
+    .table-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      padding: 17px 18px;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(180deg, white, #fbfcff);
+    }
+    .table-toolbar h2 { margin: 0; color: var(--navy); font-size: 18px; }
+    .table-toolbar p { margin: 3px 0 0; color: var(--muted); font-size: 12px; }
+    .toolbar-actions { display: flex; gap: 8px; align-items: center; }
+    .toolbar-actions select { min-height: 38px; border: 1px solid var(--line); border-radius: 9px; padding: 7px 9px; background: white; }
+    .table-scroll { width: 100%; overflow: hidden; }
+    table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+    thead th {
+      padding: 10px 9px;
+      background: var(--navy);
+      color: white;
+      text-align: left;
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+    tbody td { padding: 11px 9px; border-bottom: 1px solid #edf1f6; vertical-align: top; font-size: 12px; }
+    tbody tr:hover { background: #f8fbff; }
+    th:nth-child(1) { width: 16%; }
+    th:nth-child(2) { width: 13%; }
+    th:nth-child(3), th:nth-child(8), th:nth-child(9) { width: 6%; }
+    th:nth-child(4), th:nth-child(5), th:nth-child(6) { width: 7%; }
+    th:nth-child(7), th:nth-child(10) { width: 10%; }
+    th:nth-child(11) { width: 12%; }
+    .client-name { display: block; color: var(--ink); font-size: 13px; font-weight: 850; line-height: 1.25; }
+    .client-meta, .cell-note { display: block; margin-top: 4px; color: var(--muted); font-size: 10px; line-height: 1.3; }
+    .money { white-space: nowrap; font-weight: 800; }
+    .progress-track { height: 7px; margin-top: 6px; overflow: hidden; border-radius: 99px; background: #e5eaf2; }
+    .progress-fill { height: 100%; border-radius: inherit; background: var(--blue); }
+    .badge {
+      display: inline-block;
+      max-width: 100%;
+      padding: 5px 7px;
+      border-radius: 999px;
+      background: #e8eef9;
+      color: var(--navy);
+      font-size: 10px;
+      font-weight: 900;
+      line-height: 1.15;
+      text-align: center;
+    }
+    .badge.x2 { background: #dcfce7; color: #166534; }
+    .badge.recovery { background: #fef3c7; color: #92400e; }
+    .badge.x1 { background: #dbeafe; color: #1e40af; }
+    .badge.none { background: #f1f5f9; color: #64748b; }
+    .badge.high { background: var(--green-soft); color: var(--green); }
+    .badge.closed { background: #d1fae5; color: #065f46; }
+    .badge.medium { background: var(--amber-soft); color: var(--amber); }
+    .badge.low { background: var(--rose-soft); color: #be123c; }
+    .action-text { color: var(--ink); font-weight: 700; line-height: 1.35; }
+    .vp-grid { display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:5px; }
+    .vp-item { padding:5px 6px; border-radius:8px; background:#f1f5f9; }
+    .vp-item span { display:block; color:var(--muted); font-size:8px; font-weight:800; text-transform:uppercase; line-height:1.1; }
+    .vp-item strong { display:block; margin-top:2px; color:var(--navy); font-size:11px; line-height:1.1; }
+    .vp-item.projected { background:#eaf1ff; }
+    .vp-item.available { background:#dcfce7; }
+    .empty-state { display: none; padding: 44px 20px; text-align: center; color: var(--muted); }
+    .empty-state.visible { display: block; }
+    .pagination {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 18px;
+      border-top: 1px solid var(--line);
+      background: #fbfcff;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .page-controls { display: flex; gap: 6px; align-items: center; }
+    .page-button:disabled { opacity: .4; cursor: not-allowed; }
+    .method-grid { display: grid; grid-template-columns: 1.3fr .7fr; gap: 15px; margin-top: 18px; }
+    details.panel { padding: 0; overflow: hidden; }
+    details summary { padding: 17px 18px; cursor: pointer; color: var(--navy); font-size: 15px; font-weight: 900; }
+    details[open] summary { border-bottom: 1px solid var(--line); }
+    .details-content { padding: 16px 18px 18px; }
+    .rules-list { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+    .rules-list li { padding: 10px 12px; border-left: 4px solid var(--gold); border-radius: 8px; background: #f8fafc; font-size: 13px; line-height: 1.45; }
+    .quality-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .quality-item { padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; }
+    .quality-item span { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; }
+    .quality-item strong { display: block; margin-top: 3px; color: var(--navy); font-size: 15px; }
+    .source-files { margin-top: 12px; color: var(--muted); font-size: 11px; line-height: 1.5; word-break: break-word; }
+    .source-files code { color: var(--ink); }
+    footer { margin-top: 22px; text-align: center; color: var(--muted); font-size: 11px; }
+    .loading, .fatal {
+      min-height: 70vh;
+      display: grid;
+      place-items: center;
+      padding: 30px;
+      text-align: center;
+    }
+    .loading-box, .fatal-box { max-width: 560px; padding: 28px; border-radius: 20px; background: white; box-shadow: var(--shadow); }
+    .spinner { width: 38px; height: 38px; margin: 0 auto 15px; border: 4px solid #dbe5f4; border-top-color: var(--red); border-radius: 50%; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .fatal { display: none; }
+    .fatal h2 { color: var(--red-dark); }
+    .hidden { display: none !important; }
+    @media (max-width: 1240px) {
+      .kpi-grid { grid-template-columns: repeat(3, 1fr); }
+      .filter-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .field.search { grid-column: span 2; }
+      th:nth-child(2), td:nth-child(2) { display: none; }
+      th:nth-child(1) { width: 23%; }
+    }
+    @media (max-width: 820px) {
+      .hero-inner { grid-template-columns: 1fr; }
+      .hero-meta { justify-content: flex-start; }
+      .meta-chip { min-width: 0; flex: 1; }
+      .shell, .hero-inner { width: min(100% - 24px, 1480px); }
+      .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+      .filter-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .field.search { grid-column: 1 / -1; }
+      .insight-grid, .method-grid { grid-template-columns: 1fr; }
+      .table-toolbar { align-items: flex-start; flex-direction: column; }
+      .table-scroll { overflow: visible; }
+      table, tbody, tr, td { display: block; width: 100%; }
+      thead { display: none; }
+      tbody { padding: 10px; }
+      tbody tr { margin-bottom: 10px; padding: 12px; border: 1px solid var(--line); border-radius: 14px; background: white; }
+      tbody td { display: grid !important; grid-template-columns: 112px 1fr; gap: 10px; padding: 7px 0; border-bottom: 1px dashed #e3e8f0; }
+      tbody td:last-child { border-bottom: 0; }
+      tbody td::before { content: attr(data-label); color: var(--muted); font-size: 10px; font-weight: 900; text-transform: uppercase; }
+      .progress-track { max-width: 220px; }
+    }
+    @media (max-width: 520px) {
+      .hero-inner { padding-top: 16px; }
+      .brand-mark { width: 48px; height: 48px; border-radius: 14px; }
+      .hero-meta { display: grid; grid-template-columns: 1fr; }
+      .security-strip { white-space: normal; line-height: 1.35; }
+      .kpi-grid { grid-template-columns: 1fr; }
+      .kpi { min-height: 105px; }
+      .filter-grid { grid-template-columns: 1fr; }
+      .field.search { grid-column: auto; }
+      .filter-top { align-items: flex-start; }
+      .toolbar-actions { width: 100%; flex-wrap: wrap; }
+      .export-button { flex: 1; }
+      .bar-row { grid-template-columns: 115px 1fr 50px; }
+      .pagination { align-items: flex-start; flex-direction: column; }
+      .quality-grid { grid-template-columns: 1fr; }
+    }
+    @media print {
+      body { background: white; }
+      .no-print, .filters-panel, .pagination, details:not([open]) { display: none !important; }
+      .shell, .hero-inner { width: 100%; }
+      .panel, .kpi { box-shadow: none; break-inside: avoid; }
+      tbody tr:nth-child(n+16) { display: none; }
+    }
+  </style>
+</head>
+<body>
+<style>
+  [hidden] { display:none !important; }
+  #auth-panel {min-height:100vh;display:grid;place-items:center;padding:24px;background:linear-gradient(135deg,#10264d,#203d70);}
+  .auth-card {background:white;border-radius:20px;padding:30px;width:min(100%,430px);box-shadow:0 18px 60px #0003;border-top:6px solid #ffbd17;}
+  .auth-card h1 {color:#122a54;margin:8px 0;}
+  .auth-card p {line-height:1.5;color:#52647a;}
+  .auth-card label {display:block;margin-top:16px;font-weight:700;}
+  .auth-card input {display:block;width:100%;padding:12px;border:1px solid #b9c6d9;border-radius:8px;margin-top:6px;}
+  .auth-card button,#session-bar button {padding:11px 16px;border:0;border-radius:8px;background:#122a54;color:white;font-weight:700;cursor:pointer;}
+  .auth-card button {margin-top:18px;} .auth-card button:disabled {opacity:.6;}
+  #session-bar {display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap;padding:10px 20px;background:white;border-bottom:1px solid #dce3ee;}
+  #session-bar span {margin-right:auto;align-self:center;color:#52647a;font-size:13px;}
+  #password-dialog {border:0;} #password-dialog::backdrop {background:#10264dbb;}
+</style>
+<section id="auth-panel" hidden aria-labelledby="auth-title">
+ <div class="auth-card"><small>GRUPO VEGA DISTRIBUCIÓN</small><h1 id="auth-title">Vega Puntos</h1>
+ <p>Consulta las cuotas, avances y puntos de tus clientes. Acceso exclusivo para usuarios habilitados.</p>
+ <form id="login-form">
+  <label>Correo<input id="auth-email" type="email" autocomplete="username" required></label>
+  <label>Contraseña de la cabina<input id="auth-password" type="password" autocomplete="current-password" required></label>
+  <button id="login-button" type="submit">Ingresar</button>
+ </form><p id="auth-message" role="status" aria-live="polite"></p>
+ <p><small>Usa la contraseña creada para esta cabina, no la de tu correo. Si necesitas restablecerla, contacta a Alejandro.</small></p></div>
+</section>
+<nav id="session-bar" hidden aria-label="Sesión">
+ <span>Acceso autorizado · todas las sucursales</span>
+ <button id="reload-button" type="button">Actualizar vista</button>
+ <button id="password-button" type="button">Cambiar contraseña</button>
+ <button id="logout-button" type="button">Cerrar sesión</button>
+</nav>
+<dialog id="password-dialog" class="auth-card" aria-labelledby="password-title">
+ <h2 id="password-title">Cambiar contraseña</h2>
+ <form id="password-form">
+  <label>Contraseña actual<input id="current-password" type="password" autocomplete="current-password" required></label>
+  <label>Nueva contraseña<input id="new-password" type="password" autocomplete="new-password" minlength="12" required></label>
+  <label>Repite la nueva contraseña<input id="repeat-password" type="password" autocomplete="new-password" minlength="12" required></label>
+  <p><small>Usa al menos 12 caracteres y una contraseña que no utilices en otros servicios.</small></p>
+  <button id="password-save" type="submit">Guardar contraseña</button>
+  <button id="password-cancel" type="button">Cerrar</button>
+ </form><p id="password-message" role="status" aria-live="polite"></p>
+</dialog>
+
+  <div id="loading" class="loading">
+    <div class="loading-box">
+      <div class="spinner" aria-hidden="true"></div>
+      <strong>Preparando la Cabina Vega Puntos…</strong>
+      <p>Validando el corte y organizando la cartera por cliente único.</p>
+    </div>
+  </div>
+  <div id="fatal" class="fatal" role="alert">
+    <div class="fatal-box">
+      <h2>Estado de la cabina</h2>
+      <p id="fatal-message"></p>
+      <p>Usa <strong>Actualizar vista</strong> para intentar nuevamente. Si aún no hay un corte cargado, contacta a Alejandro.</p>
+    </div>
+  </div>
+  <div id="app" class="app hidden">
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">VP</div>
+          <div>
+            <p class="eyebrow">Programa comercial · Ruta / Cobertura</p>
+            <h1>Cabina Vega Puntos</h1>
+            <p>Quién está por cerrar, qué beneficio alcanzaría y dónde debe actuar la fuerza de ventas.</p>
+          </div>
+        </div>
+        <div class="hero-meta">
+          <div class="meta-chip"><span>Corte publicado</span><strong id="report-date">—</strong></div>
+          <div class="meta-chip"><span>Ventas cerradas al</span><strong id="sales-cut">—</strong></div>
+          <div class="meta-chip"><span>Estado de fuente</span><strong id="source-status">—</strong></div>
+        </div>
+      </div>
+      <div class="security-strip" id="security-label">Uso interno</div>
+    </header>
+    <main class="shell">
+      <div id="source-alert" class="source-alert" role="status"></div>
+
+      <div class="section-heading">
+        <div><h2>Lectura ejecutiva del corte</h2><p>Los indicadores se recalculan con los filtros y cuentan cada cliente una sola vez.</p></div>
+        <p class="view-note"><strong id="filtered-label">Vista total</strong><br><span id="filtered-count">—</span></p>
+      </div>
+      <section class="kpi-grid" aria-label="Indicadores principales">
+        <article class="kpi"><span class="label">Clientes del corte</span><div class="value" id="kpi-clients">—</div><div class="note">Universo oficial con jerarquía vigente</div></article>
+        <article class="kpi accent-gold"><span class="label">Cumplieron agosto · Real</span><div class="value" id="kpi-august">—</div><div class="note" id="kpi-august-rate">—</div></article>
+        <article class="kpi accent-green"><span class="label">X2 · Real / Proyectado</span><div class="value pair"><span id="kpi-x2-current">—</span><small>→</small><span id="kpi-x2-projected">—</span></div><div class="note">Cumplimiento dentro de cada mes</div></article>
+        <article class="kpi accent-gold"><span class="label">Recuperación X1 · Real / Proyectado</span><div class="value pair"><span id="kpi-recovery-current">—</span><small>→</small><span id="kpi-recovery-projected">—</span></div><div class="note">Completa las dos cuotas al cierre</div></article>
+        <article class="kpi accent-red"><span class="label">X1 setiembre · Proyectado</span><div class="value" id="kpi-x1-september">—</div><div class="note">Sin multiplicador</div></article>
+        <article class="kpi"><span class="label">Canje · Usuarios / saldo</span><div class="value pair"><span id="kpi-users">—</span><small>·</small><span id="kpi-balance">—</span></div><div class="note" id="kpi-used">—</div></article>
+      </section>
+
+      <section class="panel filters-panel no-print" aria-label="Filtros comerciales">
+        <div class="filter-top"><strong>Filtra la cartera para accionar</strong><button id="reset-filters" class="reset-button" type="button">Restablecer</button></div>
+        <div class="filter-grid">
+          <div class="field search"><label for="search">Cliente o código</label><input id="search" type="search" placeholder="Buscar…" autocomplete="off"></div>
+          <div class="field"><label for="branch">Sucursal</label><select id="branch"></select></div>
+          <div class="field"><label for="jv">JV</label><select id="jv"></select></div>
+          <div class="field"><label for="supervisor">Supervisor</label><select id="supervisor"></select></div>
+          <div class="field"><label for="seller">Vendedor</label><select id="seller"></select></div>
+          <div class="field"><span id="viability-label">Viabilidad</span><details class="multi-filter"><summary id="viability-summary" aria-label="Seleccionar una o varias viabilidades">Todas</summary><div id="viability" role="group" aria-labelledby="viability-label"></div></details></div>
+          <div class="field"><span id="mechanic-label">Mecánica proyectada</span><details class="multi-filter"><summary id="mechanic-summary" aria-label="Seleccionar una o varias mecánicas proyectadas">Todas</summary><div id="mechanic" role="group" aria-labelledby="mechanic-label"></div></details></div>
+          <div class="field"><label for="has-vp">Saldo VP</label><select id="has-vp"><option value="">Todos</option><option value="1">Con saldo</option><option value="0">Sin saldo</option></select></div>
+        </div>
+        <div class="quick-filters" role="group" aria-label="Vistas rápidas">
+          <button class="quick-filter active" data-quick="all" type="button">Todos</button>
+          <button class="quick-filter" data-quick="actionable" type="button">Cierres accionables</button>
+          <button class="quick-filter" data-quick="closed" type="button">Beneficio alcanzado</button>
+          <button class="quick-filter" data-quick="used" type="button">Usaron Vega Puntos</button>
+        </div>
+      </section>
+
+      <section class="insight-grid" aria-label="Distribución y prioridades">
+        <article class="panel insight-card"><h3>Cierre proyectado</h3><p>Resultado esperado si cada cliente mantiene su ritmo observado.</p><div id="mechanics-bars"></div></article>
+        <article class="panel insight-card"><h3>Cola de gestión</h3><p>Orden sugerido para convertir la brecha en cierres.</p><div id="priority-list"></div></article>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="table-toolbar">
+          <div><h2>Cartera accionable</h2><p id="table-caption">—</p></div>
+          <div class="toolbar-actions no-print">
+            <label class="hidden" for="sort">Orden</label>
+            <select id="sort" title="Ordenar cartera">
+              <option value="priority">Prioridad comercial</option>
+              <option value="gap">Menor brecha</option>
+              <option value="projection">Mayor proyección</option>
+              <option value="name">Nombre del cliente</option>
+            </select>
+            <button id="export" class="export-button" type="button">Exportar vista</button>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table aria-describedby="table-caption">
+            <thead><tr><th>Cliente</th><th>Responsable</th><th>Cuota</th><th>Venta AGO</th><th>Venta SEP</th><th>Proyección</th><th>Mecánica proyectada</th><th>Brecha</th><th>Viabilidad</th><th>Vega Puntos</th><th>Acción sugerida</th></tr></thead>
+            <tbody id="client-rows"></tbody>
+          </table>
+          <div id="empty-state" class="empty-state"><strong>No hay clientes para esta combinación.</strong><p>Prueba retirando uno de los filtros o vuelve a “Todos”.</p></div>
+        </div>
+        <div class="pagination no-print">
+          <span id="pagination-label">—</span>
+          <div class="page-controls"><button id="prev-page" class="page-button" type="button">Anterior</button><span id="page-label">—</span><button id="next-page" class="page-button" type="button">Siguiente</button></div>
+        </div>
+      </section>
+
+      <section class="method-grid">
+        <details class="panel" open>
+          <summary>Cómo se calcula</summary>
+          <div class="details-content"><ul id="rules-list" class="rules-list"></ul></div>
+        </details>
+        <details class="panel">
+          <summary>Fuente y calidad del corte</summary>
+          <div class="details-content">
+            <div id="quality-grid" class="quality-grid"></div>
+            <div id="source-files" class="source-files"></div>
+          </div>
+        </details>
+      </section>
+      <footer>Coordinación Comercial de Marcas Propias · Cabina independiente Vega Puntos · <span id="generated-at">—</span></footer>
+    </main>
+  </div>
+
+  <script src="auth-client.js"></script>
+  <script>
+    (() => {
+      "use strict";
+      const I = Object.freeze({ CODE:0, NAME:1, BRANCH:2, QUOTA:3, AUG:4, SEP:5, PROGRESS:6, PROJECTION:7, CURRENT_MECH:8, PROJECTED_MECH:9, TARGET:10, GAP:11, REQUIRED:12, DAILY:13, VIABILITY:14, PROJECTED_VP:15, EARNED_VP:16, USED_VP:17, AVAILABLE_VP:18, PRIORITY:19, ACTION:20, HISTORICAL:21, ASSIGNMENTS:22, HAS_VP:23, OBJECTIVE:24 });
+      const PAGE_SIZE = 35;
+      const numberFormatter = new Intl.NumberFormat("es-PE", { maximumFractionDigits: 0 });
+      const pointFormatter = new Intl.NumberFormat("es-PE", { maximumFractionDigits: 0 });
+      const moneyFormatter = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 0, maximumFractionDigits: 0 });
+      const money2Formatter = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      const state = { data:null, filtered:[], page:1, quick:"all", sort:"priority", searchTimer:null };
+      const $ = (id) => document.getElementById(id);
+      const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
+      const normalize = (value) => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
+      const percent = (value) => `${Math.round(Number(value || 0) * 100)}%`;
+      const formatNumber = (value) => numberFormatter.format(Number(value || 0));
+      const formatPoints = (value) => pointFormatter.format(Number(value || 0));
+      const formatMoney = (value) => moneyFormatter.format(Number(value || 0)).replace("PEN", "S/");
+      const formatMoney2 = (value) => money2Formatter.format(Number(value || 0)).replace("PEN", "S/");
+
+      async function decodeContract() { return globalThis.VegaPortal.load(); }
+
+      function fillSelect(id, values, label) {
+        const select = $(id);
+        select.innerHTML = `<option value="">${escapeHtml(label)}</option>` + values.map((value, index) => `<option value="${index}">${escapeHtml(value)}</option>`).join("");
+      }
+
+      function fillMulti(id, values) {
+        $(id).innerHTML = values.map((value, index) => `<label for="${id}-${index}"><input id="${id}-${index}" type="checkbox" value="${index}"> ${escapeHtml(value)}</label>`).join("");
+      }
+      function selectedValues(id) {
+        return Array.from($(id).querySelectorAll("input:checked"), input => Number(input.value));
+      }
+      function refreshHierarchy() {
+        const branch = selectedIndex("branch");
+        const rows = state.data.clients.filter(row => branch === null || row[I.BRANCH] === branch);
+        const levels = [["jv", "jvs"], ["supervisor", "supervisors"], ["seller", "sellers"]];
+        let assignments = rows.flatMap(row => row[I.ASSIGNMENTS]);
+        levels.forEach(([id, dimension], level) => {
+          const previous = $(id).value;
+          const available = new Set(assignments.map(item => item[level]));
+          $(id).innerHTML = '<option value="">Todos</option>' + state.data.dimensions[dimension].map((name, index) => available.has(index) ? `<option value="${index}">${escapeHtml(name)}</option>` : "").join("");
+          $(id).value = previous !== "" && available.has(Number(previous)) ? previous : "";
+          const selected = selectedIndex(id);
+          if (selected !== null) assignments = assignments.filter(item => item[level] === selected);
+        });
+      }
+
+      function setup() {
+        const { data } = state;
+        document.title = `${data.meta.title} · corte ${data.meta.salesCutDisplay}`;
+        $("report-date").textContent = data.meta.reportDateDisplay;
+        $("sales-cut").textContent = data.meta.salesCutDisplay;
+        $("source-status").textContent = data.meta.sourceStatus;
+        $("security-label").textContent = data.meta.security;
+        $("generated-at").textContent = `generado ${new Date(data.meta.generatedAt).toLocaleString("es-PE")}`;
+        fillSelect("branch", data.dimensions.branches, "Todas");
+        fillSelect("jv", data.dimensions.jvs, "Todos");
+        fillSelect("supervisor", data.dimensions.supervisors, "Todos");
+        fillSelect("seller", data.dimensions.sellers, "Todos");
+        fillMulti("viability", data.dimensions.viabilities);
+        fillMulti("mechanic", data.dimensions.mechanics);
+        refreshHierarchy();
+        const sourceDate = new Date(`${data.meta.reportDate}T12:00:00`);
+        const today = new Date();
+        const ageDays = Math.floor((today - sourceDate) / 86400000);
+        if (data.meta.sourceStatus !== "VIGENTE" || ageDays > 1) {
+          $("source-alert").textContent = `Atención: el último archivo detectado corresponde al ${data.meta.reportDateDisplay}. Actualiza la cabina antes de usarla para el cierre de hoy.`;
+          $("source-alert").classList.add("visible");
+        }
+        renderRules();
+        renderQuality();
+        bindEvents();
+        applyFilters();
+      }
+
+      function bindEvents() {
+        const hierarchyChildren = {
+          branch: ["jv", "supervisor", "seller"],
+          jv: ["supervisor", "seller"],
+          supervisor: ["seller"],
+          seller: [],
+        };
+        Object.keys(hierarchyChildren).forEach((id) => $(id).addEventListener("change", () => {
+          hierarchyChildren[id].forEach((childId) => { $(childId).value = ""; });
+          refreshHierarchy();
+          state.page = 1;
+          applyFilters();
+        }));
+        ["viability", "mechanic", "has-vp"].forEach((id) => $(id).addEventListener("change", () => {
+          state.page = 1;
+          applyFilters();
+        }));
+        document.addEventListener("click", (event) => {
+          document.querySelectorAll(".multi-filter[open]").forEach((details) => {
+            if (!details.contains(event.target)) details.removeAttribute("open");
+          });
+        });
+        $("search").addEventListener("input", () => {
+          clearTimeout(state.searchTimer);
+          state.searchTimer = setTimeout(() => { state.page = 1; applyFilters(); }, 180);
+        });
+        $("sort").addEventListener("change", (event) => { state.sort = event.target.value; state.page = 1; applyFilters(); });
+        $("reset-filters").addEventListener("click", resetFilters);
+        document.querySelectorAll(".quick-filter").forEach((button) => button.addEventListener("click", () => {
+          state.quick = button.dataset.quick;
+          document.querySelectorAll(".quick-filter").forEach((item) => item.classList.toggle("active", item === button));
+          state.page = 1;
+          applyFilters();
+        }));
+        $("prev-page").addEventListener("click", () => { if (state.page > 1) { state.page -= 1; renderTable(); scrollToTable(); } });
+        $("next-page").addEventListener("click", () => { const max = Math.max(1, Math.ceil(state.filtered.length / PAGE_SIZE)); if (state.page < max) { state.page += 1; renderTable(); scrollToTable(); } });
+        $("export").addEventListener("click", exportFiltered);
+      }
+
+      function resetFilters() {
+        ["branch", "jv", "supervisor", "seller", "has-vp"].forEach((id) => { $(id).value = ""; });
+        ["viability", "mechanic"].forEach(id => $(id).querySelectorAll("input").forEach(input => { input.checked = false; }));
+        refreshHierarchy();
+        $("search").value = "";
+        $("sort").value = "priority";
+        state.sort = "priority";
+        state.quick = "all";
+        document.querySelectorAll(".quick-filter").forEach((button) => button.classList.toggle("active", button.dataset.quick === "all"));
+        state.page = 1;
+        applyFilters();
+      }
+
+      function selectedIndex(id) { return $(id).value === "" ? null : Number($(id).value); }
+
+      function assignmentMatches(row, jv, supervisor, seller) {
+        if (jv === null && supervisor === null && seller === null) return true;
+        return row[I.ASSIGNMENTS].some((assignment) => (jv === null || assignment[0] === jv) && (supervisor === null || assignment[1] === supervisor) && (seller === null || assignment[2] === seller));
+      }
+
+      function quickMatches(row) {
+        const current = state.data.dimensions.mechanics[row[I.CURRENT_MECH]];
+        const priority = state.data.dimensions.priorities[row[I.PRIORITY]];
+        const viability = state.data.dimensions.viabilities[row[I.VIABILITY]];
+        if (state.quick === "actionable") return ["ALTA", "MEDIA"].includes(viability) && !["1. CONFIRMAR Y RETENER", "3. BAJA VIABILIDAD"].includes(priority);
+        if (state.quick === "closed") return ["X2", "RECUPERACIÓN X1"].includes(current);
+        if (state.quick === "used") return row[I.USED_VP] > 0;
+        return true;
+      }
+
+      function applyFilters() {
+        const branch = selectedIndex("branch");
+        const jv = selectedIndex("jv");
+        const supervisor = selectedIndex("supervisor");
+        const seller = selectedIndex("seller");
+        const viability = selectedValues("viability");
+        const mechanic = selectedValues("mechanic");
+        [["viability", viability, "viabilities"], ["mechanic", mechanic, "mechanics"]].forEach(([id, values, dimension]) => {
+          const names = values.map(index => state.data.dimensions[dimension][index]);
+          const summary = values.length === 0 ? "Todas" : (values.length === 1 ? names[0] : `${values.length} seleccionadas`);
+          $(id + "-summary").textContent = summary;
+          $(id + "-summary").title = names.join(", ");
+        });
+        const hasVp = $("has-vp").value;
+        const search = normalize($("search").value.trim());
+        state.filtered = state.data.clients.filter((row) => {
+          if (branch !== null && row[I.BRANCH] !== branch) return false;
+          if (viability.length && !viability.includes(row[I.VIABILITY])) return false;
+          if (mechanic.length && !mechanic.includes(row[I.PROJECTED_MECH])) return false;
+          if (hasVp !== "" && row[I.HAS_VP] !== Number(hasVp)) return false;
+          if (!assignmentMatches(row, jv, supervisor, seller)) return false;
+          if (!quickMatches(row)) return false;
+          if (search && !normalize(`${row[I.CODE]} ${row[I.NAME]}`).includes(search)) return false;
+          return true;
+        });
+        sortFiltered();
+        renderAll();
+      }
+
+      function sortFiltered() {
+        const sort = state.sort;
+        state.filtered.sort((a, b) => {
+          if (sort === "gap") return a[I.GAP] - b[I.GAP] || a[I.PRIORITY] - b[I.PRIORITY];
+          if (sort === "projection") return b[I.PROJECTION] - a[I.PROJECTION] || a[I.PRIORITY] - b[I.PRIORITY];
+          if (sort === "name") return String(a[I.NAME]).localeCompare(String(b[I.NAME]), "es");
+          return a[I.PRIORITY] - b[I.PRIORITY] || a[I.VIABILITY] - b[I.VIABILITY] || a[I.GAP] - b[I.GAP];
+        });
+      }
+
+      function renderAll() {
+        renderKpis();
+        renderInsights();
+        renderTable();
+      }
+
+      function calculateView() {
+        const mechanics = state.data.dimensions.mechanics;
+        const counts = new Map(mechanics.map((name) => [name, 0]));
+        const priorities = new Map(state.data.dimensions.priorities.map((name) => [name, {count:0, gap:0}]));
+        let fulfilledAugust = 0, currentX2 = 0, currentRecovery = 0, users = 0, used = 0, available = 0;
+        for (const row of state.filtered) {
+          const projected = mechanics[row[I.PROJECTED_MECH]];
+          const current = mechanics[row[I.CURRENT_MECH]];
+          counts.set(projected, counts.get(projected) + 1);
+          const priority = state.data.dimensions.priorities[row[I.PRIORITY]];
+          const bucket = priorities.get(priority);
+          bucket.count += 1;
+          bucket.gap += row[I.GAP];
+          if (row[I.AUG] >= row[I.QUOTA]) fulfilledAugust += 1;
+          if (current === "X2") currentX2 += 1;
+          if (current === "RECUPERACIÓN X1") currentRecovery += 1;
+          if (row[I.USED_VP] > 0) users += 1;
+          used += Math.round(row[I.USED_VP]);
+          available += Math.round(row[I.AVAILABLE_VP]);
+        }
+        return { counts, priorities, fulfilledAugust, currentX2, currentRecovery, users, used, available };
+      }
+
+      function renderKpis() {
+        const view = calculateView();
+        const total = state.filtered.length;
+        $("kpi-clients").textContent = formatNumber(total);
+        $("kpi-august").textContent = formatNumber(view.fulfilledAugust);
+        $("kpi-august-rate").textContent = total ? `${percent(view.fulfilledAugust / total)} del universo filtrado` : "Sin clientes";
+        $("kpi-x2-current").textContent = formatNumber(view.currentX2);
+        $("kpi-x2-projected").textContent = formatNumber(view.counts.get("X2"));
+        $("kpi-recovery-current").textContent = formatNumber(view.currentRecovery);
+        $("kpi-recovery-projected").textContent = formatNumber(view.counts.get("RECUPERACIÓN X1"));
+        $("kpi-x1-september").textContent = formatNumber(view.counts.get("X1 SETIEMBRE"));
+        $("kpi-users").textContent = formatNumber(view.users);
+        $("kpi-balance").textContent = formatNumber(view.available);
+        $("kpi-used").textContent = `${formatNumber(view.used)} VP utilizados`;
+        const active = hasActiveFilters();
+        $("filtered-label").textContent = active ? "Vista filtrada" : "Vista total";
+        $("filtered-count").textContent = `${formatNumber(total)} clientes únicos`;
+      }
+
+      function hasActiveFilters() {
+        return state.quick !== "all" || Boolean($("search").value.trim()) || ["branch", "jv", "supervisor", "seller", "has-vp"].some((id) => $(id).value !== "") || ["viability", "mechanic"].some(id => selectedValues(id).length > 0);
+      }
+
+      function renderInsights() {
+        const view = calculateView();
+        const total = Math.max(1, state.filtered.length);
+        const mechanicOrder = ["X2", "RECUPERACIÓN X1", "X1 SETIEMBRE", "X1 AGOSTO", "SIN PUNTOS"];
+        $("mechanics-bars").innerHTML = mechanicOrder.map((name) => {
+          const count = view.counts.get(name) || 0;
+          const width = Math.max(0, Math.min(100, count / total * 100));
+          return `<div class="bar-row"><span class="name">${escapeHtml(name)}</span><div class="bar-track"><div class="bar-fill" style="width:${width.toFixed(2)}%"></div></div><span class="bar-value">${formatNumber(count)}</span></div>`;
+        }).join("");
+        const priorityOrder = ["1. CONFIRMAR Y RETENER", "1. CERRAR X2", "1. CERRAR RECUPERACIÓN", "2. CERRAR X1 SETIEMBRE", "3. BAJA VIABILIDAD"];
+        $("priority-list").innerHTML = priorityOrder.map((name) => {
+          const bucket = view.priorities.get(name) || {count:0, gap:0};
+          return `<div class="action-line"><div><strong>${escapeHtml(name)}</strong><small>Brecha agregada ${formatMoney(bucket.gap)}</small></div><span class="count">${formatNumber(bucket.count)}</span></div>`;
+        }).join("");
+      }
+
+      function selectedAssignments(row) {
+        const jv = selectedIndex("jv"), supervisor = selectedIndex("supervisor"), seller = selectedIndex("seller");
+        const matches = row[I.ASSIGNMENTS].filter((assignment) => (jv === null || assignment[0] === jv) && (supervisor === null || assignment[1] === supervisor) && (seller === null || assignment[2] === seller));
+        return matches.length ? matches : row[I.ASSIGNMENTS];
+      }
+
+      function responsibleText(row) {
+        const assignments = selectedAssignments(row);
+        const labels = assignments.map((assignment) => `${state.data.dimensions.jvs[assignment[0]]} · ${state.data.dimensions.supervisors[assignment[1]]} · ${state.data.dimensions.sellers[assignment[2]]}`);
+        return labels.join(" | ");
+      }
+
+      function badgeClass(mechanic) {
+        if (mechanic === "X2") return "x2";
+        if (mechanic.includes("RECUPERACIÓN")) return "recovery";
+        if (mechanic.startsWith("X1")) return "x1";
+        return "none";
+      }
+
+      function viabilityClass(value) { return value === "CERRADO" ? "closed" : value === "ALTA" ? "high" : value === "MEDIA" ? "medium" : "low"; }
+
+      function renderTable() {
+        const totalPages = Math.max(1, Math.ceil(state.filtered.length / PAGE_SIZE));
+        state.page = Math.min(state.page, totalPages);
+        const start = (state.page - 1) * PAGE_SIZE;
+        const rows = state.filtered.slice(start, start + PAGE_SIZE);
+        const dimensions = state.data.dimensions;
+        $("client-rows").innerHTML = rows.map((row) => {
+          const branch = dimensions.branches[row[I.BRANCH]];
+          const mechanic = dimensions.mechanics[row[I.PROJECTED_MECH]];
+          const currentMechanic = dimensions.mechanics[row[I.CURRENT_MECH]];
+          const objective = dimensions.mechanics[row[I.OBJECTIVE]];
+          const viability = dimensions.viabilities[row[I.VIABILITY]];
+          const augustProgress = row[I.QUOTA] ? row[I.AUG] / row[I.QUOTA] : 0;
+          const augustProgressWidth = Math.max(0, Math.min(100, augustProgress * 100));
+          const progressWidth = Math.max(0, Math.min(100, row[I.PROGRESS] * 100));
+          const required = row[I.REQUIRED] === null ? "Sin días restantes" : `Requiere ${formatMoney(Math.ceil(row[I.REQUIRED]))}/día`;
+          return `<tr>
+            <td data-label="Cliente"><span class="client-name">${escapeHtml(row[I.NAME])}</span><span class="client-meta">${escapeHtml(row[I.CODE])} · ${escapeHtml(branch)}</span></td>
+            <td data-label="Responsable">${responsibleText(row).split(" | ").map(label => `<div>${escapeHtml(label)}</div>`).join("")}</td>
+            <td data-label="Cuota"><span class="money">${formatMoney(row[I.QUOTA])}</span></td>
+            <td data-label="Venta AGO"><span class="money">${formatMoney(row[I.AUG])}</span><span class="cell-note">${percent(augustProgress)} de cuota</span><div class="progress-track"><div class="progress-fill" style="width:${augustProgressWidth}%"></div></div></td>
+            <td data-label="Venta SEP"><span class="money">${formatMoney(row[I.SEP])}</span><span class="cell-note">${percent(row[I.PROGRESS])} de cuota</span><div class="progress-track"><div class="progress-fill" style="width:${progressWidth}%"></div></div></td>
+            <td data-label="Proyección"><span class="money">${formatMoney(row[I.PROJECTION])}</span><span class="cell-note">PROYECTADO</span></td>
+            <td data-label="Mecánica"><span class="badge ${badgeClass(mechanic)}">${escapeHtml(mechanic)}</span><span class="cell-note">Objetivo: ${escapeHtml(objective)} · al corte: ${escapeHtml(currentMechanic)}</span></td>
+            <td data-label="Brecha"><span class="money">${formatMoney(row[I.GAP])}</span><span class="cell-note">${escapeHtml(required)}</span></td>
+            <td data-label="Viabilidad"><span class="badge ${viabilityClass(viability)}">${escapeHtml(viability)}</span></td>
+            <td data-label="Vega Puntos"><div class="vp-grid"><div class="vp-item"><span>Ganados</span><strong>${formatPoints(row[I.EARNED_VP])}</strong></div><div class="vp-item projected"><span>Proyectados</span><strong>${formatPoints(row[I.PROJECTED_VP])}</strong></div><div class="vp-item"><span>Usados</span><strong>${formatPoints(row[I.USED_VP])}</strong></div><div class="vp-item available"><span>Disponibles</span><strong>${formatPoints(row[I.AVAILABLE_VP])}</strong></div></div></td>
+            <td data-label="Acción"><span class="action-text">${escapeHtml(row[I.ACTION])}</span></td>
+          </tr>`;
+        }).join("");
+        const empty = state.filtered.length === 0;
+        $("empty-state").classList.toggle("visible", empty);
+        $("client-rows").classList.toggle("hidden", empty);
+        const shownFrom = empty ? 0 : start + 1;
+        const shownTo = Math.min(start + PAGE_SIZE, state.filtered.length);
+        $("table-caption").textContent = `${formatNumber(state.filtered.length)} clientes únicos · ordenados para seguimiento comercial`;
+        $("pagination-label").textContent = `Mostrando ${formatNumber(shownFrom)}–${formatNumber(shownTo)} de ${formatNumber(state.filtered.length)}`;
+        $("page-label").textContent = `Página ${state.page} de ${totalPages}`;
+        $("prev-page").disabled = state.page <= 1;
+        $("next-page").disabled = state.page >= totalPages;
+      }
+
+      function renderRules() {
+        const labels = [
+          ["Proyección", state.data.rules.projection],
+          ["Viabilidad", state.data.rules.viability],
+          ["X2", state.data.rules.x2],
+          ["Recuperación", state.data.rules.recovery],
+          ["Vega Puntos", state.data.rules.points],
+          ["Exclusiones", state.data.rules.exclusions],
+          ["Grano", state.data.rules.clientGrain],
+          ["Presentación de puntos", "VP ganados, proyectados, usados y disponibles se muestran y exportan redondeados al entero más cercano. Los totales visibles suman los valores redondeados por cliente; se conservan los valores originales de ICEN para auditoría."],
+          ["Requerido por día", "Brecha pendiente para el objetivo indicado dividida entre los días calendario restantes hasta fin de mes. Se muestra redondeado hacia arriba a soles enteros. No representa el ritmo de compra observado ni la proyección."],
+          ["Lectura", state.data.rules.labels],
+        ];
+        $("rules-list").innerHTML = labels.map(([name, text]) => `<li><strong>${escapeHtml(name)}:</strong> ${escapeHtml(text)}</li>`).join("");
+      }
+
+      function renderQuality() {
+        const quality = state.data.quality;
+        const items = [
+          ["Clientes en el corte", quality.dailyUniqueClients],
+          ["Asignaciones", quality.dailyAssignments],
+          ["Asignaciones alineadas", quality.alignedAssignments],
+          ["Cruces retirados de la cascada", quality.crossBranchAssignments],
+          ["Clientes en revisión jerárquica", quality.clientsWithoutAlignedAssignment],
+          ["Ausentes del extracto", quality.masterClientsAbsentFromDaily],
+          ["Cruces sin maestro", quality.missingMasterClients],
+          ["Conflictos operativos", quality.operationalValueConflicts],
+          ["Conflictos de prefijo", quality.prefixConflicts],
+          ["Filas sin JV", quality.missingJvRows],
+        ];
+        $("quality-grid").innerHTML = items.map(([label, value]) => `<div class="quality-item"><span>${escapeHtml(label)}</span><strong>${formatNumber(value)}</strong></div>`).join("");
+        const daily = state.data.meta.sources.daily;
+        const quota = state.data.meta.sources.quota;
+        $("source-files").innerHTML = `<strong>Fuentes:</strong><br><code>${escapeHtml(daily.file)}</code> · SHA-256 ${escapeHtml(daily.sha256.slice(0, 12))}…<br><code>${escapeHtml(quota.file)}</code> · SHA-256 ${escapeHtml(quota.sha256.slice(0, 12))}…<br><br>${escapeHtml(quality.branchRule)}`;
+      }
+
+      function exportFiltered() {
+        const header = ["Sucursal","Código cliente","Cliente","JV / Supervisor / Vendedor","Cuota","Venta AGO","Venta SEP","Avance SEP","Proyección SEP","Mecánica al corte","Mecánica proyectada","Brecha","Compra diaria requerida","Viabilidad","VP proyectados","VP ganados","VP usados","VP disponibles","Prioridad","Acción sugerida"];
+        const quote = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+        const lines = [header.map(quote).join(";")];
+        for (const row of state.filtered) {
+          lines.push([
+            state.data.dimensions.branches[row[I.BRANCH]], row[I.CODE], row[I.NAME], responsibleText(row), row[I.QUOTA], row[I.AUG], row[I.SEP], row[I.PROGRESS], row[I.PROJECTION],
+            state.data.dimensions.mechanics[row[I.CURRENT_MECH]], state.data.dimensions.mechanics[row[I.PROJECTED_MECH]], row[I.GAP], row[I.REQUIRED] ?? "", state.data.dimensions.viabilities[row[I.VIABILITY]],
+            Math.round(row[I.PROJECTED_VP]), Math.round(row[I.EARNED_VP]), Math.round(row[I.USED_VP]), Math.round(row[I.AVAILABLE_VP]), state.data.dimensions.priorities[row[I.PRIORITY]], row[I.ACTION],
+          ].map(quote).join(";"));
+        }
+        const blob = new Blob(["\ufeff" + lines.join("\r\n")], {type:"text/csv;charset=utf-8"});
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = `Cartera_Vega_Puntos_${state.data.meta.salesCut}.csv`;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 500);
+      }
+
+      function scrollToTable() { document.querySelector(".table-panel").scrollIntoView({behavior:"smooth", block:"start"}); }
+
+      async function init() {
+        try {
+          state.data = await decodeContract();
+          setup();
+          $("loading").classList.add("hidden");
+          $("app").classList.remove("hidden");
+        } catch (error) {
+          console.error(error);
+          $("loading").classList.add("hidden");
+          $("fatal-message").textContent = error instanceof Error ? error.message : String(error);
+          $("fatal").style.display = "grid";
+        }
+      }
+      init();
+    })();
+  </script>
+</body>
+</html>
