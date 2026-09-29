@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-VKY4hdsfO6+iTm7ZHpGCD7eP3d0Sjk49ERsy5cNCszs='; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src https://cotifawudlwgkcxksngl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-DMUjBxnNSCKq7Q1td+bGijqKo76lLx0VNv2LvuaZFGA='; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src https://cotifawudlwgkcxksngl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Cabina Vega Puntos</title>
   <style>
     :root {
@@ -470,8 +470,8 @@
           </div>
         </div>
         <div class="hero-meta">
-          <div class="meta-chip"><span>Corte publicado</span><strong id="report-date">—</strong></div>
-          <div class="meta-chip"><span>Ventas cerradas al</span><strong id="sales-cut">—</strong></div>
+          <div class="meta-chip"><span>Archivo fuente al</span><strong id="report-date">—</strong></div>
+          <div class="meta-chip"><span>Ventas al corte</span><strong id="sales-cut">—</strong></div>
           <div class="meta-chip"><span>Estado de fuente</span><strong id="source-status">—</strong></div>
         </div>
       </div>
@@ -615,7 +615,6 @@
         document.title = `${data.meta.title} · corte ${data.meta.salesCutDisplay}`;
         $("report-date").textContent = data.meta.reportDateDisplay;
         $("sales-cut").textContent = data.meta.salesCutDisplay;
-        $("source-status").textContent = data.meta.sourceStatus;
         $("security-label").textContent = data.meta.security;
         $("generated-at").textContent = `generado ${new Date(data.meta.generatedAt).toLocaleString("es-PE")}`;
         fillSelect("branch", data.dimensions.branches, "Todas");
@@ -625,11 +624,15 @@
         fillMulti("viability", data.dimensions.viabilities);
         fillMulti("mechanic", data.dimensions.mechanics);
         refreshHierarchy();
-        const sourceDate = new Date(`${data.meta.reportDate}T12:00:00`);
+        const sourceDate = new Date(`${data.meta.reportDate}T00:00:00`);
         const today = new Date();
-        const ageDays = Math.floor((today - sourceDate) / 86400000);
-        if (data.meta.sourceStatus !== "VIGENTE" || ageDays > 1) {
-          $("source-alert").textContent = `Atención: el último archivo detectado corresponde al ${data.meta.reportDateDisplay}. Actualiza la cabina antes de usarla para el cierre de hoy.`;
+        const ageDays = Math.round((Date.UTC(today.getFullYear(), today.getMonth(), today.getDate()) - Date.UTC(sourceDate.getFullYear(), sourceDate.getMonth(), sourceDate.getDate())) / 86400000);
+        const status = ageDays < 0 ? "FECHA FUTURA" : (ageDays > 1 ? "REVISAR VIGENCIA" : "VIGENTE");
+        $("source-status").textContent = status;
+        if (status !== "VIGENTE") {
+          $("source-alert").textContent = ageDays < 0
+            ? `Atención: el archivo indica un corte futuro (${data.meta.reportDateDisplay}). Verifica la fecha de la fuente.`
+            : `El último archivo disponible tiene corte al ${data.meta.reportDateDisplay}. Verifica si ya existe un archivo más reciente antes de usar la cabina.`;
           $("source-alert").classList.add("visible");
         }
         renderRules();
