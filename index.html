@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow,noarchive">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-DMUjBxnNSCKq7Q1td+bGijqKo76lLx0VNv2LvuaZFGA='; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src https://cotifawudlwgkcxksngl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'sha256-Iy7qca8gj+1gOu0dUBKOrHCMQlSIlb6N8fUlvX0gxjw='; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src https://cotifawudlwgkcxksngl.supabase.co; object-src 'none'; base-uri 'none'; form-action 'none'">
   <title>Cabina Vega Puntos</title>
   <style>
     :root {
@@ -128,6 +128,48 @@
       font-weight: 700;
     }
     .source-alert.visible { display: block; }
+    .cycle-tabs { display:flex; flex-wrap:wrap; gap:9px; margin-bottom:16px; }
+    .cycle-tab { border:1px solid var(--line); border-radius:12px; padding:11px 16px; background:white; color:var(--navy); font-weight:850; }
+    .cycle-tab[aria-selected="true"] { background:var(--navy); color:white; border-color:var(--navy); }
+    .cycle-tab small { display:block; margin-top:2px; font-size:10px; opacity:.75; text-align:left; }
+    .oct-filters { display:grid; grid-template-columns:1.4fr repeat(6,minmax(110px,1fr)); gap:10px; }
+    .oct-toolbar { display:flex; flex-wrap:wrap; gap:10px; justify-content:space-between; align-items:center; margin:16px 0 10px; }
+    .oct-toolbar p { margin:0; font-size:12px; color:var(--muted); }
+    .oct-table-scroll { width:100%; overflow-x:hidden; }
+    .oct-table { width:100%; min-width:0; table-layout:fixed; }
+    .oct-table thead th, .oct-table td { overflow-wrap:anywhere; }
+    .oct-table thead th:nth-child(1) { width:16%; }
+    .oct-table thead th:nth-child(2) { width:23%; }
+    .oct-table thead th:nth-child(3) { width:15%; }
+    .oct-table thead th:nth-child(4) { width:17%; }
+    .oct-table thead th:nth-child(5) { width:16%; }
+    .oct-table thead th:nth-child(6) { width:13%; }
+    .oct-table td { line-height:1.3; }
+    .oct-table .oct-fact { display:block; margin-top:4px; }
+    .oct-table .oct-fact:first-child { margin-top:0; }
+    .oct-table .oct-fact-label { color:var(--muted); font-size:10px; font-weight:700; }
+    .oct-table .oct-fact strong { color:var(--navy); }
+    .oct-pane { padding:8px; border-radius:10px; border:1px solid #dce7f7; background:#f0f6ff; }
+    .oct-pane + .oct-pane { margin-top:6px; }
+    .oct-pane.target { border-color:#f3dfaf; background:#fff9e9; }
+    .oct-pane.mechanic { border-color:#d9e8e0; background:#f0faf4; }
+    .oct-pane.history { border-color:#e0e5ed; background:#f6f8fc; }
+    .oct-pane .cell-note { margin-top:3px; }
+    .oct-meter { margin-top:6px; }
+    .oct-meter-label { display:flex; justify-content:space-between; gap:4px; color:var(--muted); font-size:10px; }
+    .oct-meter-track { height:6px; margin-top:3px; overflow:hidden; border-radius:99px; background:#dce6f5; }
+    .oct-meter-fill { display:block; height:100%; border-radius:inherit; background:#2765db; }
+    .oct-meter.projection .oct-meter-fill { background:#12a574; }
+    .oct-points-projected { display:block; margin-top:6px; padding:6px; border-radius:7px; background:#e4edff; color:#17366f; font-size:11px; }
+    .oct-points-projected strong { font-size:14px; }
+    .oct-table .vp-grid { grid-template-columns:1fr; }
+    .oct-table .route-note { display:block; margin-top:4px; color:var(--muted); font-size:10px; }
+    .oct-source { padding:15px 18px; margin-top:18px; font-size:12px; line-height:1.5; color:var(--muted); }
+    .oct-source strong { color:var(--navy); }
+    #archive-cycle .field.archive-viability, #archive-cycle [data-quick="actionable"] { display:none; }
+    #archive-cycle .insight-grid { grid-template-columns:1fr; }
+    #archive-cycle .insight-card:nth-child(2), #archive-cycle .archive-result .pair small,
+    #archive-cycle #kpi-x2-projected, #archive-cycle #kpi-recovery-projected { display:none; }
     .section-heading {
       display: flex;
       justify-content: space-between;
@@ -219,6 +261,9 @@
       font-weight: 800;
     }
     .quick-filter.active { border-color: var(--navy); background: var(--navy); color: white; }
+    .quick-filter.balance-filter { display:inline-flex; align-items:center; gap:6px; cursor:pointer; }
+    .balance-filter input { margin:0; accent-color:var(--gold); }
+    .balance-filter:focus-within { outline:2px solid var(--blue); outline-offset:2px; }
     .insight-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 18px; }
     .insight-card { padding: 18px; }
     .insight-card h3 { margin: 0; color: var(--navy); font-size: 16px; }
@@ -355,8 +400,13 @@
       .field.search { grid-column: span 2; }
       th:nth-child(2), td:nth-child(2) { display: none; }
       th:nth-child(1) { width: 23%; }
+      .oct-table th:nth-child(2), .oct-table td:nth-child(2) { display:table-cell; }
+      .oct-table th:nth-child(1) { width:16%; }
     }
     @media (max-width: 820px) {
+      .oct-filters { grid-template-columns:repeat(2,minmax(0,1fr)); }
+      .oct-table { min-width:0; }
+      .oct-table-scroll { overflow:visible; }
       .hero-inner { grid-template-columns: 1fr; }
       .hero-meta { justify-content: flex-start; }
       .meta-chip { min-width: 0; flex: 1; }
@@ -377,6 +427,7 @@
       .progress-track { max-width: 220px; }
     }
     @media (max-width: 520px) {
+      .oct-filters { grid-template-columns:1fr; }
       .hero-inner { padding-top: 16px; }
       .brand-mark { width: 48px; height: 48px; border-radius: 14px; }
       .hero-meta { display: grid; grid-template-columns: 1fr; }
@@ -480,6 +531,44 @@
     <main class="shell">
       <div id="source-alert" class="source-alert" role="status"></div>
 
+      <nav class="cycle-tabs no-print" role="tablist" aria-label="Ciclo de Vega Puntos">
+        <button id="tab-oct" class="cycle-tab" type="button" role="tab" aria-controls="oct-cycle" aria-selected="true">Octubre–noviembre 2026<small>Plan activo · corte reportado</small></button>
+        <button id="tab-archive" class="cycle-tab" type="button" role="tab" aria-controls="archive-cycle" aria-selected="false">Agosto–setiembre 2026<small>CERRADO · consulta histórica</small></button>
+      </nav>
+
+      <div id="oct-cycle" role="tabpanel" aria-labelledby="tab-oct">
+        <div class="section-heading"><div><h2>Plan octubre–noviembre</h2><p id="oct-cut-label">—</p></div><p class="view-note"><strong id="oct-filtered-label">Vista total</strong><br><span id="oct-filtered-count">—</span></p></div>
+        <section class="kpi-grid" aria-label="Avance parcial oficial de octubre">
+          <article class="kpi"><span class="label">Clientes con cuota válida</span><div class="value" id="oct-kpi-valid">—</div><div class="note" id="oct-kpi-invalid">—</div></article>
+          <article class="kpi accent-gold"><span class="label">Avance OCT Vega Puntos · con IGV</span><div class="value" id="oct-kpi-sales">—</div><div class="note">Fuente oficial · 09/10 aún abierto</div></article>
+          <article class="kpi accent-green"><span class="label">Cuota octubre alcanzada</span><div class="value" id="oct-kpi-fulfilled">—</div><div class="note" id="oct-kpi-rate">—</div></article>
+          <article class="kpi"><span class="label">Proyectan cuota octubre</span><div class="value" id="oct-kpi-projected">—</div><div class="note" id="oct-kpi-projected-rate">Ritmo calendario lineal; no es compromiso</div></article>
+          <article class="kpi accent-red"><span class="label">Clientes con día asignado</span><div class="value" id="oct-kpi-visits">—</div><div class="note">Base de visitas octubre 2026</div></article>
+          <article class="kpi"><span class="label">Clientes programados mañana</span><div class="value" id="oct-kpi-tomorrow">—</div><div class="note" id="oct-tomorrow-name">—</div></article>
+        </section>
+        <section class="panel filters-panel no-print" aria-label="Filtros del nuevo ciclo">
+          <div class="filter-top"><strong>Preparar cartera por ruta</strong><button id="oct-reset" class="reset-button" type="button">Restablecer</button></div>
+          <div class="oct-filters">
+            <div class="field"><label for="oct-search">Cliente o código</label><input id="oct-search" type="search" placeholder="Buscar…"></div>
+            <div class="field"><label for="oct-branch">Sucursal</label><select id="oct-branch"></select></div>
+            <div class="field"><label for="oct-jv">JV</label><select id="oct-jv"></select></div>
+            <div class="field"><label for="oct-super">Supervisor</label><select id="oct-super"></select></div>
+            <div class="field"><label for="oct-seller">Vendedor</label><select id="oct-seller"></select></div>
+            <div class="field"><label for="oct-day">Día de visita asignado</label><select id="oct-day"></select></div>
+            <div class="field"><label for="oct-status">Estado octubre</label><select id="oct-status"></select></div>
+          </div>
+          <div class="quick-filters"><button id="oct-tomorrow" class="quick-filter" type="button">Solo mañana</button><button id="oct-without-day" class="quick-filter" type="button">Sin día asignado</button><label id="oct-balance-filter" class="quick-filter balance-filter" for="oct-with-balance" title="Saldo del último extracto; verificar vigencia antes del canje"><input id="oct-with-balance" type="checkbox"> Con saldo VP Ago–Set</label></div>
+        </section>
+        <section class="panel table-panel" aria-label="Cartera octubre noviembre">
+          <div class="table-toolbar"><div><h2>Cartera para abordar</h2><p id="oct-table-caption">—</p></div><div class="toolbar-actions no-print"><button id="oct-export" class="export-button" type="button">Exportar vista para supervisor</button></div></div>
+          <div class="oct-table-scroll"><table class="oct-table"><thead><tr><th>Cliente</th><th>Ruta y visita</th><th>Avance OCT</th><th>Meta de cierre</th><th>Mecánica y acción</th><th>VP Ago–Set</th></tr></thead><tbody id="oct-client-rows"></tbody></table><div id="oct-empty" class="empty-state"><strong>No hay clientes en esta vista.</strong><p>Revisa los filtros o consulta los casos sin día asignado.</p></div></div>
+          <div class="pagination no-print"><span id="oct-pagination">—</span><div class="page-controls"><button id="oct-prev" class="page-button" type="button">Anterior</button><span id="oct-page">—</span><button id="oct-next" class="page-button" type="button">Siguiente</button></div></div>
+        </section>
+        <details class="panel oct-source"><summary>Fuentes, mecánica y límites del corte</summary><div id="oct-source-detail" class="details-content"></div></details>
+      </div>
+
+      <div id="archive-cycle" class="hidden" role="tabpanel" aria-labelledby="tab-archive">
+
       <div class="section-heading">
         <div><h2>Lectura ejecutiva del corte</h2><p>Los indicadores se recalculan con los filtros y cuentan cada cliente una sola vez.</p></div>
         <p class="view-note"><strong id="filtered-label">Vista total</strong><br><span id="filtered-count">—</span></p>
@@ -487,9 +576,9 @@
       <section class="kpi-grid" aria-label="Indicadores principales">
         <article class="kpi"><span class="label">Clientes del corte</span><div class="value" id="kpi-clients">—</div><div class="note">Universo oficial con jerarquía vigente</div></article>
         <article class="kpi accent-gold"><span class="label">Cumplieron agosto · Real</span><div class="value" id="kpi-august">—</div><div class="note" id="kpi-august-rate">—</div></article>
-        <article class="kpi accent-green"><span class="label">X2 · Real / Proyectado</span><div class="value pair"><span id="kpi-x2-current">—</span><small>→</small><span id="kpi-x2-projected">—</span></div><div class="note">Cumplimiento dentro de cada mes</div></article>
-        <article class="kpi accent-gold"><span class="label">Recuperación X1 · Real / Proyectado</span><div class="value pair"><span id="kpi-recovery-current">—</span><small>→</small><span id="kpi-recovery-projected">—</span></div><div class="note">Completa las dos cuotas al cierre</div></article>
-        <article class="kpi accent-red"><span class="label">X1 setiembre · Proyectado</span><div class="value" id="kpi-x1-september">—</div><div class="note">Sin multiplicador</div></article>
+        <article class="kpi accent-green archive-result"><span class="label">X2 · Final</span><div class="value pair"><span id="kpi-x2-current">—</span><small>→</small><span id="kpi-x2-projected">—</span></div><div class="note">Cumplimiento dentro de cada mes</div></article>
+        <article class="kpi accent-gold archive-result"><span class="label">Recuperación X1 · Final</span><div class="value pair"><span id="kpi-recovery-current">—</span><small>→</small><span id="kpi-recovery-projected">—</span></div><div class="note">Completó las dos cuotas al cierre</div></article>
+        <article class="kpi accent-red"><span class="label">X1 setiembre · Final</span><div class="value" id="kpi-x1-september">—</div><div class="note">Sin multiplicador</div></article>
         <article class="kpi"><span class="label">Canje · Usuarios / saldo</span><div class="value pair"><span id="kpi-users">—</span><small>·</small><span id="kpi-balance">—</span></div><div class="note" id="kpi-used">—</div></article>
       </section>
 
@@ -501,7 +590,7 @@
           <div class="field"><label for="jv">JV</label><select id="jv"></select></div>
           <div class="field"><label for="supervisor">Supervisor</label><select id="supervisor"></select></div>
           <div class="field"><label for="seller">Vendedor</label><select id="seller"></select></div>
-          <div class="field"><span id="viability-label">Viabilidad</span><details class="multi-filter"><summary id="viability-summary" aria-label="Seleccionar una o varias viabilidades">Todas</summary><div id="viability" role="group" aria-labelledby="viability-label"></div></details></div>
+          <div class="field archive-viability"><span id="viability-label">Viabilidad</span><details class="multi-filter"><summary id="viability-summary" aria-label="Seleccionar una o varias viabilidades">Todas</summary><div id="viability" role="group" aria-labelledby="viability-label"></div></details></div>
           <div class="field"><span id="mechanic-label">Mecánica proyectada</span><details class="multi-filter"><summary id="mechanic-summary" aria-label="Seleccionar una o varias mecánicas proyectadas">Todas</summary><div id="mechanic" role="group" aria-labelledby="mechanic-label"></div></details></div>
           <div class="field"><label for="has-vp">Saldo VP</label><select id="has-vp"><option value="">Todos</option><option value="1">Con saldo</option><option value="0">Sin saldo</option></select></div>
         </div>
@@ -514,7 +603,7 @@
       </section>
 
       <section class="insight-grid" aria-label="Distribución y prioridades">
-        <article class="panel insight-card"><h3>Cierre proyectado</h3><p>Resultado esperado si cada cliente mantiene su ritmo observado.</p><div id="mechanics-bars"></div></article>
+        <article class="panel insight-card"><h3>Resultado final</h3><p>Mecánica alcanzada al cierre oficial del 30/09.</p><div id="mechanics-bars"></div></article>
         <article class="panel insight-card"><h3>Cola de gestión</h3><p>Orden sugerido para convertir la brecha en cierres.</p><div id="priority-list"></div></article>
       </section>
 
@@ -524,9 +613,6 @@
           <div class="toolbar-actions no-print">
             <label class="hidden" for="sort">Orden</label>
             <select id="sort" title="Ordenar cartera">
-              <option value="priority">Prioridad comercial</option>
-              <option value="gap">Menor brecha</option>
-              <option value="projection">Mayor proyección</option>
               <option value="name">Nombre del cliente</option>
             </select>
             <button id="export" class="export-button" type="button">Exportar vista</button>
@@ -534,7 +620,7 @@
         </div>
         <div class="table-scroll">
           <table aria-describedby="table-caption">
-            <thead><tr><th>Cliente</th><th>Responsable</th><th>Cuota</th><th>Venta AGO</th><th>Venta SEP</th><th>Proyección</th><th>Mecánica proyectada</th><th>Brecha</th><th>Viabilidad</th><th>Vega Puntos</th><th>Acción sugerida</th></tr></thead>
+            <thead><tr><th>Cliente</th><th>Responsable</th><th>Cuota</th><th>Venta AGO</th><th>Venta SEP</th><th>Venta final</th><th>Mecánica final</th><th>Brecha final</th><th>Estado</th><th>Vega Puntos</th><th>Lectura</th></tr></thead>
             <tbody id="client-rows"></tbody>
           </table>
           <div id="empty-state" class="empty-state"><strong>No hay clientes para esta combinación.</strong><p>Prueba retirando uno de los filtros o vuelve a “Todos”.</p></div>
@@ -558,6 +644,7 @@
           </div>
         </details>
       </section>
+      </div>
       <footer>Coordinación Comercial de Marcas Propias · Cabina independiente Vega Puntos · <span id="generated-at">—</span></footer>
     </main>
   </div>
@@ -572,13 +659,15 @@
       const pointFormatter = new Intl.NumberFormat("es-PE", { maximumFractionDigits: 0 });
       const moneyFormatter = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 0, maximumFractionDigits: 0 });
       const money2Formatter = new Intl.NumberFormat("es-PE", { style: "currency", currency: "PEN", minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      const state = { data:null, filtered:[], page:1, quick:"all", sort:"priority", searchTimer:null };
+      const state = { data:null, filtered:[], page:1, quick:"all", sort:"priority", searchTimer:null,
+        octFiltered:[], octPage:1, octQuick:"all", octHasBalance:false, activeCycle:"oct" };
       const $ = (id) => document.getElementById(id);
       const escapeHtml = (value) => String(value ?? "").replace(/[&<>'"]/g, (char) => ({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]));
       const normalize = (value) => String(value ?? "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toUpperCase();
       const percent = (value) => `${Math.round(Number(value || 0) * 100)}%`;
+      const percentPrecise = (value) => new Intl.NumberFormat("es-PE", {style:"percent", minimumFractionDigits:2, maximumFractionDigits:3}).format(Number(value || 0));
       const formatNumber = (value) => numberFormatter.format(Number(value || 0));
-      const formatPoints = (value) => pointFormatter.format(Number(value || 0));
+      const formatPoints = (value) => value == null ? "Sin dato" : pointFormatter.format(Number(value));
       const formatMoney = (value) => moneyFormatter.format(Number(value || 0)).replace("PEN", "S/");
       const formatMoney2 = (value) => money2Formatter.format(Number(value || 0)).replace("PEN", "S/");
 
@@ -637,8 +726,207 @@
         }
         renderRules();
         renderQuality();
+        state.sort = "name";
         bindEvents();
         applyFilters();
+        if (data.nextCycle) {
+          setupOct();
+          activateCycle("oct");
+        } else {
+          $("tab-oct").disabled = true;
+          activateCycle("archive");
+        }
+      }
+
+      function activateCycle(cycle) {
+        state.activeCycle = cycle;
+        const isOct = cycle === "oct" && Boolean(state.data.nextCycle);
+        $("oct-cycle").classList.toggle("hidden", !isOct);
+        $("archive-cycle").classList.toggle("hidden", isOct);
+        $("tab-oct").setAttribute("aria-selected", String(isOct));
+        $("tab-archive").setAttribute("aria-selected", String(!isOct));
+        $("source-alert").classList.remove("visible");
+        if (isOct) {
+          const meta = state.data.nextCycle.meta;
+          $("report-date").textContent = meta.salesCutDisplay;
+          $("sales-cut").textContent = meta.salesCutDisplay;
+          $("source-status").textContent = meta.salesStatus.includes("PARCIAL") ? "PARCIAL" : "PROVISIONAL";
+          document.title = `Vega Puntos octubre–noviembre · corte ${meta.salesCutDisplay}`;
+        } else {
+          $("report-date").textContent = state.data.meta.reportDateDisplay;
+          $("sales-cut").textContent = state.data.meta.salesCutDisplay;
+          $("source-status").textContent = "CERRADO";
+          document.title = "Vega Puntos agosto–setiembre · cerrado";
+        }
+      }
+
+      function octSelect(id, values, allLabel="Todos") {
+        const current = $(id).value;
+        $(id).innerHTML = `<option value="">${escapeHtml(allLabel)}</option>` + values.map(value => `<option value="${escapeHtml(value)}">${escapeHtml(value)}</option>`).join("");
+        $(id).value = values.includes(current) ? current : "";
+      }
+
+      function refreshOctHierarchy() {
+        const rows = state.data.nextCycle.clients;
+        const levels = [["oct-branch",0],["oct-jv",1],["oct-super",2],["oct-seller",3]];
+        let available = rows.flatMap(row => row[16]);
+        levels.forEach(([id, index]) => {
+          const values = Array.from(new Set(available.map(assignment => assignment[index]))).sort((a,b) => a.localeCompare(b,"es"));
+          octSelect(id, values);
+          if ($(id).value) available = available.filter(assignment => assignment[index] === $(id).value);
+        });
+      }
+
+      function tomorrowIndex() { return new Date(Date.now() + 86400000).getDay() === 0 ? 6 : new Date(Date.now() + 86400000).getDay() - 1; }
+      function setupOct() {
+        const cycle = state.data.nextCycle;
+        $("oct-cut-label").textContent = `Reporte Vega Puntos al ${cycle.meta.salesCutDisplay} · corte reportado · ${formatNumber(cycle.summary.withAdvancement)} clientes con registro`;
+        $("tab-oct").querySelector("small").textContent = `Plan activo · ${cycle.meta.salesCutDisplay}`;
+        octSelect("oct-day", cycle.dimensions.weekdays, "Todos los días");
+        octSelect("oct-status", ["CUMPLIDO OCT","EN RUTA","ACTIVAR","RIESGO","SIN REGISTRO VP"], "Todos los estados");
+        refreshOctHierarchy();
+        const q = cycle.quality;
+        $("oct-source-detail").innerHTML = `<p><strong>Cuota:</strong> ${escapeHtml(cycle.meta.quotaFile)} · ${formatNumber(q.defaultedQuotas||0)} clientes con cuota final no utilizable recibieron la cuota mínima de S/1.000 por regla de Alejandro; ${formatNumber(q.invalidQuotas||0)} permanecen sin cuota. El archivo fuente no se modificó.</p>
+          <p><strong>Avance OCT oficial:</strong> ${escapeHtml(cycle.meta.advanceFile)} al ${escapeHtml(cycle.meta.salesCutDisplay)}. #SOL OCT y #VP se toman una sola vez por cliente, aunque el archivo repita vendedores. ${formatNumber(q.advancementMissingClients)} clientes del plan no aparecen en ese reporte: se muestran «Sin registro», no venta cero. Las ventas generales cerradas al ${escapeHtml(cycle.meta.closedSalesCut)} solo aportan jerarquía y zona de referencia, no sustituyen el avance Vega Puntos.</p>
+          <p><strong>Proyección:</strong> avance OCT reportado ÷ días calendario transcurridos × 31. El 09/10 es parcial, por lo que la proyección, la brecha, el pedido sugerido y los VP proyectados pueden cambiar al cierre. El cumplimiento provisional cuenta clientes únicos con registro y cuota válida.</p>
+          <p><strong>Requerido por día:</strong> brecha OCT ÷ días calendario restantes después del corte de ventas, redondeado hacia arriba a soles enteros. Es una meta de recuperación, no el ritmo actual ni una venta confirmada. Si la cuota no es válida o no quedan días y existe brecha, se muestra sin dato.</p>
+          <p><strong>Pedido para X1 OCT:</strong> máximo entre cero y cuota mensual menos venta OCT provisional, redondeado hacia arriba al sol. Es la compra válida adicional necesaria si se quiere completar la cuota en un único próximo pedido; también puede acumularse en varios pedidos. No es un ticket histórico ni un pedido confirmado. Las devoluciones posteriores pueden volver a abrir la brecha.</p>
+          <p><strong>VP OCT:</strong> «reportados» preserva #VP del archivo parcial sin recalcularlo. «Proyectados X1» es un escenario: si la proyección de compra alcanza la cuota válida, toma un punto por cada S/100 completos; si no, cero. No equivale a beneficio final ni incluye noviembre, X2 o X3.</p>
+          <p><strong>Puntos agosto–setiembre:</strong> ganados, usados y restantes provienen del extracto ${escapeHtml(cycle.meta.historicalPointsFile)} al ${escapeHtml(cycle.meta.historicalPointsCut)}. Son campos oficiales independientes; no se recalculan. Confirmar vigencia antes del canje: agosto venció el 30/09; setiembre y ajuste X2 vencen el 31/10. Sin cliente en el extracto se muestra «Sin dato».</p>
+          <p><strong>Visita oficial:</strong> ${escapeHtml(cycle.meta.visitFile)}. Se cruzan cliente, JV, supervisor y vendedor; un cliente puede tener varios días programados y aparecer en más de una fila del CSV de ruta. ${formatNumber(q.withoutVisitDay)} clientes del plan no tienen día en esa base. Sucursal y zona de referencia provienen de la jerarquía de ventas y deben confirmarse si difieren del rutero operativo.</p>
+          <p><strong>Mecánica objetivo:</strong> X1 OCT es la meta accionable de octubre. La etiqueta «proyecta X1» solo usa el ritmo calendario provisional. Cumplir octubre abre la posibilidad de X2 o X3 si se cumplen las condiciones de noviembre: X3 exige noviembre hasta el 20/11, facturado al 21/11. Si no se cumple octubre, aún puede recuperarse X1 al alcanzar la suma bimestral en noviembre. No se adjudican X2/X3, recuperación ni puntos oficiales antes de contar con el corte válido correspondiente.</p>`;
+        ["oct-branch","oct-jv","oct-super","oct-seller"].forEach((id, level) => $(id).addEventListener("change", () => {
+          ["oct-jv","oct-super","oct-seller"].slice(level).forEach(child => { $(child).value = ""; });
+          refreshOctHierarchy(); state.octPage=1; applyOctFilters();
+        }));
+        ["oct-day","oct-status"].forEach(id => $(id).addEventListener("change", () => { state.octQuick="all"; syncOctQuick(); state.octPage=1; applyOctFilters(); }));
+        $("oct-search").addEventListener("input", () => { state.octPage=1; applyOctFilters(); });
+        $("oct-reset").addEventListener("click", () => {
+          ["oct-branch","oct-jv","oct-super","oct-seller","oct-day","oct-status"].forEach(id => { $(id).value=""; });
+          $("oct-search").value=""; $("oct-with-balance").checked=false; $("oct-balance-filter").classList.remove("active"); state.octHasBalance=false; state.octQuick="all"; state.octPage=1; refreshOctHierarchy(); syncOctQuick(); applyOctFilters();
+        });
+        $("oct-with-balance").addEventListener("change", () => { state.octHasBalance=$("oct-with-balance").checked; $("oct-balance-filter").classList.toggle("active",state.octHasBalance); state.octPage=1; applyOctFilters(); });
+        $("oct-tomorrow").addEventListener("click", () => { state.octQuick=state.octQuick==="tomorrow"?"all":"tomorrow"; $("oct-day").value=""; state.octPage=1; syncOctQuick(); applyOctFilters(); });
+        $("oct-without-day").addEventListener("click", () => { state.octQuick=state.octQuick==="undated"?"all":"undated"; $("oct-day").value=""; state.octPage=1; syncOctQuick(); applyOctFilters(); });
+        $("oct-prev").addEventListener("click", () => { if(state.octPage>1){state.octPage--;renderOctTable();} });
+        $("oct-next").addEventListener("click", () => { if(state.octPage<Math.ceil(state.octFiltered.length/PAGE_SIZE)){state.octPage++;renderOctTable();} });
+        $("oct-export").addEventListener("click", exportOct);
+        $("tab-oct").addEventListener("click", () => activateCycle("oct"));
+        $("tab-archive").addEventListener("click", () => activateCycle("archive"));
+        applyOctFilters();
+      }
+
+      function syncOctQuick() {
+        $("oct-tomorrow").classList.toggle("active",state.octQuick==="tomorrow");
+        $("oct-without-day").classList.toggle("active",state.octQuick==="undated");
+      }
+
+      function octSelectedAssignments(row) {
+        const branch=$("oct-branch").value, jv=$("oct-jv").value, sup=$("oct-super").value, seller=$("oct-seller").value;
+        const day=$("oct-day").value, tomorrow=tomorrowIndex(), weekdays=state.data.nextCycle.dimensions.weekdays;
+        return row[16].filter(a => {
+          if(branch && a[0]!==branch || jv && a[1]!==jv || sup && a[2]!==sup || seller && a[3]!==seller) return false;
+          if(day && weekdays[a[5]]!==day) return false;
+          if(state.octQuick==="tomorrow" && a[5]!==tomorrow || state.octQuick==="undated" && a[5]!==null) return false;
+          return true;
+        }).sort((a,b)=>(a[5]===null)-(b[5]===null) || b[7]-a[7] || b[8]-a[8]);
+      }
+
+      function applyOctFilters() {
+        const cycle=state.data.nextCycle, day=$("oct-day").value;
+        const branch=$("oct-branch").value, jv=$("oct-jv").value, sup=$("oct-super").value, seller=$("oct-seller").value;
+        const status=$("oct-status").value, search=normalize($("oct-search").value);
+        const tomorrow=tomorrowIndex();
+        state.octFiltered=cycle.clients.filter(row => {
+          if(status && row[15]!==status) return false;
+          if(state.octHasBalance && !(row[18] && row[18][2]>0)) return false;
+          if(search && !normalize(`${row[0]} ${row[1]}`).includes(search)) return false;
+          return octSelectedAssignments(row).length>0;
+        });
+        state.octFiltered.sort((a,b) => {
+          const aClosed=a[15]==="CUMPLIDO OCT"?1:0, bClosed=b[15]==="CUMPLIDO OCT"?1:0;
+          return aClosed-bClosed || (a[14]??Infinity)-(b[14]??Infinity) || String(a[1]).localeCompare(String(b[1]),"es");
+        });
+        const total=state.octFiltered.length, valid=state.octFiltered.filter(row=>row[11]!==null);
+        const reported=valid.filter(row=>row[12]!==null);
+        const fulfilled=reported.filter(row=>row[12]>=row[11]).length;
+        const projected=reported.filter(row=>row[13]>=row[11]).length;
+        const dated=state.octFiltered.filter(row=>octSelectedAssignments(row).some(a=>a[5]!==null)).length;
+        const tomorrowCount=state.octFiltered.filter(row=>octSelectedAssignments(row).some(a=>a[5]===tomorrow)).length;
+        $("oct-kpi-valid").textContent=formatNumber(valid.length);
+        $("oct-kpi-invalid").textContent=`${formatNumber(total-reported.length)} sin registro VP en esta vista`;
+        $("oct-kpi-sales").textContent=reported.length?formatMoney(reported.reduce((sum,row)=>sum+row[12],0)):"—";
+        $("oct-kpi-fulfilled").textContent=formatNumber(fulfilled);
+        $("oct-kpi-rate").textContent=reported.length?`${percentPrecise(fulfilled/reported.length)} de clientes con reporte VP`:"Sin registro VP";
+        $("oct-kpi-projected").textContent=formatNumber(projected);
+        $("oct-kpi-projected-rate").textContent=reported.length?`${percentPrecise(projected/reported.length)} con reporte · ritmo parcial`:"Sin registro VP";
+        $("oct-kpi-visits").textContent=formatNumber(dated);
+        $("oct-kpi-tomorrow").textContent=formatNumber(tomorrowCount);
+        $("oct-tomorrow-name").textContent=cycle.dimensions.weekdays[tomorrow]+" · base de visitas";
+        $("oct-filtered-label").textContent=branch||jv||sup||seller||day||status||search||state.octQuick!=="all"||state.octHasBalance?"Vista filtrada":"Vista total";
+        $("oct-filtered-count").textContent=`${formatNumber(total)} clientes únicos`;
+        renderOctTable();
+      }
+
+      function octDecision(row) {
+        const quota=row[11];
+        if (quota===null) return {requiredOrder:null, objective:"CUOTA POR VALIDAR", pace:"Sin proyección válida", next:"Validar cuota"};
+        if (row[12]===null) return {requiredOrder:null, objective:"SIN REGISTRO VP", pace:"Sin avance en reporte", next:"Verificar cliente en fuente"};
+        return {
+          requiredOrder:Math.ceil(Math.max(0,quota-row[12])),
+          objective:"X1 OCT",
+          pace:row[12]>=quota?"Alcanzado provisionalmente":row[13]>=quota?"Proyecta X1 al ritmo":"No proyecta X1 al ritmo",
+          next:"X2/X3: sujeto a NOV",
+        };
+      }
+
+      function octProjectedPoints(row) {
+        if (row[11]===null || row[13]===null) return null;
+        return row[13]>=row[11] ? Math.floor(Math.max(0,row[13])/100) : 0;
+      }
+
+      function renderOctTable() {
+        const total=state.octFiltered.length, pages=Math.max(1,Math.ceil(total/PAGE_SIZE));
+        state.octPage=Math.min(state.octPage,pages);
+        const start=(state.octPage-1)*PAGE_SIZE, cycle=state.data.nextCycle;
+        $("oct-client-rows").innerHTML=state.octFiltered.slice(start,start+PAGE_SIZE).map(row => {
+          const assignment=octSelectedAssignments(row)[0];
+          const visit=assignment[5]===null?"Sin día asignado":cycle.dimensions.weekdays[assignment[5]];
+          const evidence=assignment[5]===null?"No figura en base de visitas":"Asignado en base de octubre";
+          const decision=octDecision(row);
+          const projectedPoints=octProjectedPoints(row);
+          const saleProgress=row[11] && row[12]!==null ? Math.round(row[12]/row[11]*100) : null;
+          const projectedProgress=row[11] && row[13]!==null ? Math.round(row[13]/row[11]*100) : null;
+          const points=row[18];
+          const actionBase=row[15]==="SIN REGISTRO VP"?"Confirmar inclusión y avance del cliente en el reporte":row[15]==="CUOTA POR VALIDAR"?"Validar cuota antes de ofrecer el plan":row[15]==="CUMPLIDO OCT"?"Confirmar el cierre del día y sostener noviembre":assignment[5]===null?`Validar ruta; pedido objetivo ${formatMoney(decision.requiredOrder)}`:`Abordar en visita; pedido objetivo ${formatMoney(decision.requiredOrder)}`;
+          const action=actionBase+(points && points[2]>0?" · verificar VP vigente en BI":"");
+          return `<tr><td data-label="Cliente"><span class="client-name">${escapeHtml(row[1])}</span><span class="client-meta">${escapeHtml(row[0])}</span></td>
+            <td data-label="Ruta y visita"><strong>${escapeHtml(assignment[0])}</strong><span class="oct-fact">${escapeHtml(assignment[1])} · ${escapeHtml(assignment[2])} · ${escapeHtml(assignment[3])}</span><span class="cell-note">${escapeHtml(assignment[4]||"Zona sin dato")}</span><span class="oct-fact"><span class="oct-fact-label">Visita: </span><strong>${escapeHtml(visit)}</strong></span><span class="route-note">${escapeHtml(evidence)}</span></td>
+            <td data-label="Avance OCT"><div class="oct-pane"><span class="oct-fact"><span class="oct-fact-label">Cuota: </span><strong>${formatMoney(row[11])}</strong></span>${row[19]?'<span class="cell-note">Cuota mínima asignada</span>':""}<span class="oct-fact"><span class="oct-fact-label">Venta: </span><strong>${(row[12]===null?"Sin registro":formatMoney(row[12]))}</strong></span><span class="cell-note">Reporte VP · 09/10 parcial</span>${saleProgress===null?"":`<div class="oct-meter" role="img" aria-label="Venta provisional: ${saleProgress}% de cuota"><div class="oct-meter-label"><span>Avance</span><strong>${saleProgress}%</strong></div><div class="oct-meter-track"><span class="oct-meter-fill" style="width:${Math.min(100,Math.max(0,saleProgress))}%"></span></div></div>`}<span class="oct-fact"><span class="oct-fact-label">Proy.: </span><strong>${(row[13]===null?"—":formatMoney(row[13]))}</strong></span>${projectedProgress===null?"":`<div class="oct-meter projection" role="img" aria-label="Proyección al ritmo calendario: ${projectedProgress}% de cuota"><div class="oct-meter-label"><span>Ritmo calendario</span><strong>${projectedProgress}%</strong></div><div class="oct-meter-track"><span class="oct-meter-fill" style="width:${Math.min(100,Math.max(0,projectedProgress))}%"></span></div></div>`}</div></td>
+            <td data-label="Meta de cierre"><div class="oct-pane target"><span class="oct-fact"><span class="oct-fact-label">Brecha: </span><strong>${row[14]===null?"—":formatMoney(row[14])}</strong></span><span class="oct-fact"><span class="oct-fact-label">Requerido/día: </span><strong>${row[17]===null?row[12]===null?"Sin registro":"Sin días restantes":formatMoney(row[17])}</strong></span><span class="cell-note">Meta restante, no ritmo actual</span><span class="oct-fact"><span class="oct-fact-label">Pedido X1: </span><strong>${decision.requiredOrder===null?"Sin registro":formatMoney(decision.requiredOrder)}</strong></span><span class="cell-note">Compra válida adicional</span></div></td>
+            <td data-label="Mecánica y acción"><div class="oct-pane mechanic"><strong>${escapeHtml(decision.objective)}</strong><span class="cell-note">${escapeHtml(decision.pace)} · ${escapeHtml(decision.next)}</span><span class="oct-points-projected">VP OCT proyectados X1: <strong>${projectedPoints===null?"—":formatPoints(projectedPoints)}</strong></span><span class="cell-note">Escenario parcial; sin NOV</span><span class="oct-points-projected">VP OCT reportados: <strong>${row[20]===null?"—":formatPoints(row[20])}</strong></span></div><span class="oct-fact"><span class="badge ${row[15]==="CUMPLIDO OCT"?"closed":row[15]==="EN RUTA"?"high":"medium"}">${escapeHtml(row[15])}</span></span><span class="cell-note">${escapeHtml(action)}</span></td>
+            <td data-label="VP Ago–Set"><div class="oct-pane history">${points?`<div class="vp-grid"><div class="vp-item"><span>Ganados</span><strong>${formatPoints(points[0])}</strong></div><div class="vp-item"><span>Usados</span><strong>${formatPoints(points[1])}</strong></div><div class="vp-item available"><span>Restantes</span><strong>${formatPoints(points[2])}</strong></div></div><span class="cell-note">Reporte ${escapeHtml(cycle.meta.historicalPointsCut)} · verificar vigencia</span>`:"Sin dato en extracto"}</div></td></tr>`;
+        }).join("");
+        $("oct-empty").classList.toggle("visible",total===0);
+        $("oct-table-caption").textContent=`${formatNumber(total)} clientes únicos · ruta asignada y avance parcial oficial`;
+        $("oct-pagination").textContent=`Mostrando ${total?formatNumber(start+1):0}–${formatNumber(Math.min(total,start+PAGE_SIZE))} de ${formatNumber(total)}`;
+        $("oct-page").textContent=`Página ${state.octPage} de ${pages}`;
+        $("oct-prev").disabled=state.octPage<=1; $("oct-next").disabled=state.octPage>=pages;
+      }
+
+      function exportOct() {
+        const quote=value=>{ const raw=String(value??""); const safe=typeof value==="string" && /^[=+@\-\t\r]/.test(raw)?"'"+raw:raw; return `"${safe.replace(/"/g,'""')}"`; };
+        const header=["Código cliente","Cliente","Sucursal","JV","Supervisor","Vendedor","Zona","Día de visita asignado","Origen día","Cuota mensual con IGV","Origen cuota","Avance OCT reporte VP parcial con IGV","Proyección OCT parcial con IGV","Brecha OCT con IGV","Requerido por día restante OCT (S/ con IGV)","Pedido mínimo para X1 OCT (un pedido, S/ con IGV)","Mecánica objetivo OCT","Mecánica OCT al ritmo","VP OCT proyectados X1 (escenario provisional)","VP OCT reportados (reporte parcial)","Posibilidad noviembre","VP ganados Ago-Set","VP usados Ago-Set","VP restantes reportados Ago-Set","Corte puntos","Saldo canjeable vigente","Estado","Fecha reporte parcial","Nota"];
+        const cycle=state.data.nextCycle;
+        const lines=[header.map(quote).join(";")];
+        state.octFiltered.forEach(row=>octSelectedAssignments(row).forEach(a=>{
+          const decision=octDecision(row);
+          const points=row[18];
+          lines.push([row[0],row[1],a[0],a[1],a[2],a[3],a[4],a[5]===null?"SIN AGENDA":cycle.dimensions.weekdays[a[5]],a[9],row[11]??"",row[19]?"MÍNIMA S/1000":"ARCHIVO",row[12],row[13],row[14]??"",row[17]??"",decision.requiredOrder??"",decision.objective,decision.pace,octProjectedPoints(row)??"",row[20]??"",decision.next,points?.[0]==null?"":Math.round(points[0]),points?.[1]==null?"":Math.round(points[1]),points?.[2]==null?"":Math.round(points[2]),points?cycle.meta.historicalPointsCut:"SIN DATO",points?"NO CONFIRMADO; VER BI":"SIN DATO",row[15],cycle.meta.salesCut,"Avance y VP OCT provienen del reporte oficial; los VP proyectados X1 son escenario de ritmo, sin NOV. Saldo Ago-Set proviene del extracto indicado en Corte puntos. Verificar vigencia antes del canje"].map(quote).join(";"));
+        }));
+        const url=URL.createObjectURL(new Blob(["\ufeff"+lines.join("\r\n")],{type:"text/csv;charset=utf-8"}));
+        const link=document.createElement("a"); link.href=url; link.download=`Vega_Puntos_Oct_Nov_Ruta_${cycle.meta.salesCut}.csv`;
+        document.body.appendChild(link); link.click(); link.remove(); setTimeout(()=>URL.revokeObjectURL(url),500);
       }
 
       function bindEvents() {
@@ -685,8 +973,8 @@
         ["viability", "mechanic"].forEach(id => $(id).querySelectorAll("input").forEach(input => { input.checked = false; }));
         refreshHierarchy();
         $("search").value = "";
-        $("sort").value = "priority";
-        state.sort = "priority";
+        $("sort").value = "name";
+        state.sort = "name";
         state.quick = "all";
         document.querySelectorAll(".quick-filter").forEach((button) => button.classList.toggle("active", button.dataset.quick === "all"));
         state.page = 1;
@@ -849,23 +1137,24 @@
           const mechanic = dimensions.mechanics[row[I.PROJECTED_MECH]];
           const currentMechanic = dimensions.mechanics[row[I.CURRENT_MECH]];
           const objective = dimensions.mechanics[row[I.OBJECTIVE]];
-          const viability = dimensions.viabilities[row[I.VIABILITY]];
+          const viability = "CERRADO";
           const augustProgress = row[I.QUOTA] ? row[I.AUG] / row[I.QUOTA] : 0;
           const augustProgressWidth = Math.max(0, Math.min(100, augustProgress * 100));
           const progressWidth = Math.max(0, Math.min(100, row[I.PROGRESS] * 100));
-          const required = row[I.REQUIRED] === null ? "Sin días restantes" : `Requiere ${formatMoney(Math.ceil(row[I.REQUIRED]))}/día`;
+          const required = "Ciclo cerrado";
+          const archiveAction = mechanic === "SIN PUNTOS" ? "Sin puntos al cierre del ciclo" : "Beneficio registrado al cierre; validar saldo oficial antes del canje";
           return `<tr>
             <td data-label="Cliente"><span class="client-name">${escapeHtml(row[I.NAME])}</span><span class="client-meta">${escapeHtml(row[I.CODE])} · ${escapeHtml(branch)}</span></td>
             <td data-label="Responsable">${responsibleText(row).split(" | ").map(label => `<div>${escapeHtml(label)}</div>`).join("")}</td>
             <td data-label="Cuota"><span class="money">${formatMoney(row[I.QUOTA])}</span></td>
             <td data-label="Venta AGO"><span class="money">${formatMoney(row[I.AUG])}</span><span class="cell-note">${percent(augustProgress)} de cuota</span><div class="progress-track"><div class="progress-fill" style="width:${augustProgressWidth}%"></div></div></td>
             <td data-label="Venta SEP"><span class="money">${formatMoney(row[I.SEP])}</span><span class="cell-note">${percent(row[I.PROGRESS])} de cuota</span><div class="progress-track"><div class="progress-fill" style="width:${progressWidth}%"></div></div></td>
-            <td data-label="Proyección"><span class="money">${formatMoney(row[I.PROJECTION])}</span><span class="cell-note">PROYECTADO</span></td>
+            <td data-label="Venta final"><span class="money">${formatMoney(row[I.PROJECTION])}</span><span class="cell-note">REAL AL CIERRE</span></td>
             <td data-label="Mecánica"><span class="badge ${badgeClass(mechanic)}">${escapeHtml(mechanic)}</span><span class="cell-note">Objetivo: ${escapeHtml(objective)} · al corte: ${escapeHtml(currentMechanic)}</span></td>
             <td data-label="Brecha"><span class="money">${formatMoney(row[I.GAP])}</span><span class="cell-note">${escapeHtml(required)}</span></td>
             <td data-label="Viabilidad"><span class="badge ${viabilityClass(viability)}">${escapeHtml(viability)}</span></td>
-            <td data-label="Vega Puntos"><div class="vp-grid"><div class="vp-item"><span>Ganados</span><strong>${formatPoints(row[I.EARNED_VP])}</strong></div><div class="vp-item projected"><span>Proyectados</span><strong>${formatPoints(row[I.PROJECTED_VP])}</strong></div><div class="vp-item"><span>Usados</span><strong>${formatPoints(row[I.USED_VP])}</strong></div><div class="vp-item available"><span>Disponibles</span><strong>${formatPoints(row[I.AVAILABLE_VP])}</strong></div></div></td>
-            <td data-label="Acción"><span class="action-text">${escapeHtml(row[I.ACTION])}</span></td>
+            <td data-label="Vega Puntos"><div class="vp-grid"><div class="vp-item"><span>Ganados</span><strong>${formatPoints(row[I.EARNED_VP])}</strong></div><div class="vp-item projected"><span>Proyectados</span><strong>${formatPoints(row[I.PROJECTED_VP])}</strong></div><div class="vp-item"><span>Usados</span><strong>${formatPoints(row[I.USED_VP])}</strong></div><div class="vp-item available"><span>Restantes reportados</span><strong>${formatPoints(row[I.AVAILABLE_VP])}</strong><small>Al ${escapeHtml(state.data.meta.pointsCut??state.data.meta.salesCut)}</small></div></div></td>
+            <td data-label="Lectura"><span class="action-text">${escapeHtml(archiveAction)}</span></td>
           </tr>`;
         }).join("");
         const empty = state.filtered.length === 0;
@@ -883,7 +1172,7 @@
       function renderRules() {
         const labels = [
           ["Proyección", state.data.rules.projection],
-          ["Viabilidad", state.data.rules.viability],
+          ["Viabilidad", "No se calcula viabilidad futura: agosto–setiembre está cerrado."],
           ["X2", state.data.rules.x2],
           ["Recuperación", state.data.rules.recovery],
           ["Vega Puntos", state.data.rules.points],
@@ -917,14 +1206,14 @@
       }
 
       function exportFiltered() {
-        const header = ["Sucursal","Código cliente","Cliente","JV / Supervisor / Vendedor","Cuota","Venta AGO","Venta SEP","Avance SEP","Proyección SEP","Mecánica al corte","Mecánica proyectada","Brecha","Compra diaria requerida","Viabilidad","VP proyectados","VP ganados","VP usados","VP disponibles","Prioridad","Acción sugerida"];
-        const quote = (value) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+        const header = ["Sucursal","Código cliente","Cliente","JV / Supervisor / Vendedor","Cuota","Venta AGO","Venta SEP final","Avance SEP","Venta SEP al cierre","Mecánica al corte","Mecánica final","Brecha final","Requerido por día (no aplica)","Estado del ciclo","VP calculados","VP ganados","VP usados","VP restantes reportados","Prioridad histórica (no aplica)","Lectura final"];
+        const quote = (value) => { const raw=String(value??""); const safe=typeof value==="string" && /^[=+@\-\t\r]/.test(raw)?"'"+raw:raw; return `"${safe.replace(/"/g,'""')}"`; };
         const lines = [header.map(quote).join(";")];
         for (const row of state.filtered) {
           lines.push([
             state.data.dimensions.branches[row[I.BRANCH]], row[I.CODE], row[I.NAME], responsibleText(row), row[I.QUOTA], row[I.AUG], row[I.SEP], row[I.PROGRESS], row[I.PROJECTION],
-            state.data.dimensions.mechanics[row[I.CURRENT_MECH]], state.data.dimensions.mechanics[row[I.PROJECTED_MECH]], row[I.GAP], row[I.REQUIRED] ?? "", state.data.dimensions.viabilities[row[I.VIABILITY]],
-            Math.round(row[I.PROJECTED_VP]), Math.round(row[I.EARNED_VP]), Math.round(row[I.USED_VP]), Math.round(row[I.AVAILABLE_VP]), state.data.dimensions.priorities[row[I.PRIORITY]], row[I.ACTION],
+            state.data.dimensions.mechanics[row[I.CURRENT_MECH]], state.data.dimensions.mechanics[row[I.PROJECTED_MECH]], row[I.GAP], "", "CERRADO",
+            Math.round(row[I.PROJECTED_VP]), row[I.EARNED_VP]==null?"":Math.round(row[I.EARNED_VP]), row[I.USED_VP]==null?"":Math.round(row[I.USED_VP]), row[I.AVAILABLE_VP]==null?"":Math.round(row[I.AVAILABLE_VP]), "", "Puntos reportados al "+(state.data.meta.pointsCut??state.data.meta.salesCut)+"; verificar vigencia antes del canje",
           ].map(quote).join(";"));
         }
         const blob = new Blob(["\ufeff" + lines.join("\r\n")], {type:"text/csv;charset=utf-8"});

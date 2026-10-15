@@ -64,7 +64,9 @@
       if (digest !== rows[0].sha256) throw Error('El corte recibido no superó la verificación de integridad.');
       const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
       const data = JSON.parse(await new Response(stream).text());
-      if (!Array.isArray(data.clients) || !data.dimensions || data.meta?.salesCut !== rows[0].sales_cut)
+      const activeCut = data.nextCycle?.meta?.salesCut || data.meta?.salesCut;
+      if (!Array.isArray(data.clients) || !data.dimensions || activeCut !== rows[0].sales_cut ||
+          (data.nextCycle && !Array.isArray(data.nextCycle.clients)))
         throw Error('El corte no tiene el formato esperado.');
       data.meta.security = 'ACCESO AUTORIZADO · todas las sucursales';
       return data;
