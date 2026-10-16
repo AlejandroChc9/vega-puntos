@@ -1,0 +1,11 @@
+export function createMessagePager({date,error}){
+ const $=s=>document.querySelector(s);let batch=null,index=0,copied=new Set();
+ function render(){
+  const m=batch.messages[index];$('#message-part').value=String(index);$('#message-position').textContent=`${index+1} / ${batch.messages.length}`;$('#message-text').value=m.text;
+  $('#message-prev').disabled=index===0;$('#message-next').disabled=index===batch.messages.length-1;$('#copy-message').textContent=`Copiar mensaje ${index+1}`;$('#copy-status').textContent=m.oversized?'Este cliente tiene un detalle extenso; se conserva completo, sin recortes.':'Cada cliente aparece completo en una sola parte.';$('#copied-count').textContent=`${copied.size} de ${batch.messages.length} mensajes copiados. No se envían automáticamente.`;
+ }
+ function open(value){batch=value;index=0;copied=new Set();$('#message-title').textContent=value.seller+' · '+value.rows.length+' clientes';$('#message-meta').textContent=`Listado completo en ${value.messages.length} mensaje${value.messages.length===1?'':'s'} · compra ${date(value.rows[0]?.salesCut)} · puntos ${date(value.rows[0]?.pointsCut)}.`;$('#message-part').innerHTML=value.messages.map((m,i)=>`<option value="${i}">Mensaje ${i+1} de ${value.messages.length} · ${m.codes.length} clientes</option>`).join('');render();$('#message-dialog').showModal();}
+ $('#close-message').addEventListener('click',()=>$('#message-dialog').close());$('#message-part').addEventListener('change',e=>{index=Number(e.target.value);render();});$('#message-prev').addEventListener('click',()=>{if(index>0){index--;render();}});$('#message-next').addEventListener('click',()=>{if(index<batch.messages.length-1){index++;render();}});
+ $('#copy-message').addEventListener('click',async()=>{const part=index,text=batch.messages[part].text;try{await navigator.clipboard.writeText(text);copied.add(part);$('#copy-status').textContent=`Mensaje ${part+1} copiado. Pégalo en el WhatsApp del vendedor.`;$('#copied-count').textContent=`${copied.size} de ${batch.messages.length} mensajes copiados. No se envían automáticamente.`;}catch{$('#message-text').focus();$('#message-text').select();$('#copy-status').textContent='Texto seleccionado. Usa Copiar en tu dispositivo.';}});
+ return {open};
+}

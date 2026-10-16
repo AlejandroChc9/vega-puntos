@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="es-PE">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#001946">
+ <title>Vega Puntos · Supervisores</title><link rel="icon" href="./assets/vega-oficial.png" type="image/png"><link rel="stylesheet" href="./app.css"><script type="module" src="./protected-entry.js"></script>
+</head>
+<body>
+ <a class="skip" href="#workspace">Ir al contenido</a>
+ <div class="local-banner">ACCESO PERSONAL · VEGA PUNTOS</div>
+ <header class="brand-header"><div class="brand-inner"><div class="brand-logo"><img src="./assets/vega-oficial.png" alt="Vega, logo oficial completo" width="2048" height="2048"></div><div class="brand-title"><span>MARCAS PROPIAS</span><h1>Vega Puntos</h1><p>Espacio del supervisor</p></div><button type="button" id="reload" hidden class="header-action">Actualizar vista</button></div></header>
+<div class="account-toolbar"><span>Tu equipo · Vega Puntos</span><button id="logout" type="button" hidden>Cerrar sesión</button></div><section id="auth-panel" class="auth-panel"><h2>Ingresa a tu equipo</h2><p>Usa tu correo y contraseña actuales.</p><form id="auth-form"><label>Correo<input id="auth-email" type="email" autocomplete="username" required></label><label>Contraseña<input id="auth-password" type="password" autocomplete="current-password" required></label><button id="auth-submit" class="primary" type="submit">Ingresar</button></form><p id="auth-message" role="status" aria-live="polite"></p></section>
+ <div class="app-layout" hidden>
+  <aside class="team-panel" aria-label="Equipo comercial">
+   <details id="team-details"><summary>Equipo <span id="team-short"></span></summary><div class="team-fields">
+    <label for="team">Supervisor y sede</label><select id="team"></select><p id="team-label" class="muted small"></p>
+   </div></details>
+  </aside>
+  <main id="workspace" tabindex="-1">
+   <nav class="main-tabs" aria-label="Trabajo del supervisor"><button type="button" id="tab-prepare" aria-current="page">Preparar WhatsApp</button><button type="button" id="tab-follow">Seguimiento</button></nav>
+   <div id="error" role="alert" hidden></div><p id="status" role="status" class="status" aria-live="polite"></p>
+   <section id="prepare-panel" aria-label="Preparar mensaje por vendedor">
+    <div class="section-heading"><div><h2>Clientes para tu próxima visita</h2></div></div>
+    <div class="opportunity-filters">
+     <div class="seller-day"><label>Vendedor<select id="seller"></select></label><label>Día de visita<select id="day"><option value="">Todos los días</option><option value="0">Lunes</option><option value="1">Martes</option><option value="2">Miércoles</option><option value="3">Jueves</option><option value="4">Viernes</option><option value="5">Sábado</option></select></label></div>
+     <label class="points-toggle"><input type="checkbox" id="points-only"><span>Solo clientes con Vega Puntos por cobrar<small>Saldo reportado; validar vigencia antes de canjear.</small></span></label>
+     <fieldset class="projection-filter"><legend>Proyección de cumplimiento de cuota</legend><div class="range-heading"><output id="projection-label" for="projection-min projection-max">0% – 100%</output><button type="button" id="all-projections" class="text-button">Ver todas</button></div><div class="dual-range"><div class="range-track"><span id="range-fill"></span></div><input type="range" min="0" max="100" step="1" value="0" id="projection-min" aria-label="Proyección mínima de cuota, porcentaje"><input type="range" min="0" max="100" step="1" value="100" id="projection-max" aria-label="Proyección máxima de cuota, porcentaje"></div><div class="range-ends"><span>Desde <b id="min-value">0%</b></span><span>Hasta <b id="max-value">100%</b></span></div><p class="projection-note">Estimación al cierre de octubre; no es el avance comprado a la fecha.</p></fieldset>
+     <details class="client-search"><summary>Buscar un cliente</summary><label class="search-field"><span class="sr-only">Nombre o código de cliente</span><input type="search" id="search" placeholder="Nombre o código" autocomplete="off"></label></details>
+    </div>
+    <p id="prepare-stats" class="filter-summary" aria-live="polite"></p>
+    <p class="estimate-note">VP mostrados enteros, con redondeo. VP al cierre: estimados y sujetos a validación; aún no disponibles.</p>
+    <div class="list-toolbar"><span id="client-count"></span><div><button type="button" class="text-button" id="select-all">Seleccionar todo el resultado</button><button type="button" class="text-button" id="clear-selection">Limpiar</button></div></div>
+    <div id="clients" class="client-grid"></div><button type="button" id="load-more" class="secondary wide" hidden>Ver más clientes</button>
+    <div class="selection-bar"><div><strong id="selection-count">0 clientes seleccionados</strong><span>Los listados largos se dividen sin omitir clientes</span></div><button type="button" id="prepare-message" class="primary" disabled>Preparar mensajes</button></div>
+   </section>
+   <section id="follow-panel" aria-label="Seguimiento de oportunidades" hidden>
+    <div class="section-heading"><div><h2>¿Quién cobró sus puntos?</h2><p class="muted">Consulta los cobros por día y los días anteriores.</p></div></div>
+    <div class="tracking-selectors"><label>Vendedor<select id="follow-seller"></select></label><label>Día de cobro detectado<select id="tracking-cut"></select></label></div>
+    <p id="tracking-interval" class="tracking-interval"></p>
+    <p id="tracking-date-note" class="tracking-date-note" hidden></p>
+    <div id="tracking-stats" class="stats" aria-live="polite"></div>
+    <label class="tracking-status-label">Mostrar clientes<select id="tracking-result"><option value="used">Que cobraron puntos</option><option value="pending">Con puntos pendientes por cobrar</option><option value="all">Todos los clientes del vendedor</option><option value="none">Sin cobro detectado en la selección</option><option value="review">Con datos o movimientos por revisar</option></select></label>
+    <p id="tracking-count" class="muted small" aria-live="polite"></p><div id="tracking-clients" class="client-grid"></div><button type="button" id="tracking-more" class="secondary wide" hidden>Ver más clientes</button>
+    <p class="tracking-note">La fecha corresponde al reporte que detectó el uso de puntos. Si faltan reportes diarios, el día exacto del cobro queda sin precisar. Una caída de saldo por sí sola no confirma un cobro. Los VP se muestran enteros, con redondeo; los cálculos conservan su precisión.</p>
+   </section>
+   <footer class="workspace-footer"><div class="compact-cuts">Compra: <strong id="sales-cut">Cargando…</strong> · Puntos: <strong id="points-cut">Cargando…</strong></div><details><summary>Fuentes y criterios</summary><p id="sources"></p><p>La proyección de cuota usa la compra proyectada del contrato VP vigente dividida por la cuota mensual, con precisión de dos decimales. Es una estimación lineal con días calendario; no se sustituye por el porcentaje de avance actual.</p><p>Setiembre y ajuste x2 vencen el 31 de octubre. El saldo reportado requiere conciliar vigencia; los puntos de octubre–noviembre vencen en diciembre. Los puntos a obtener al cumplir cuota son estimados, no saldo disponible.</p><p>La diferencia de compra muestra avance neto entre reportes; no demuestra por sí sola que el mensaje causó una venta. El aumento de puntos utilizados se muestra como uso reportado; una caída del saldo puede deberse a vencimientos o ajustes.</p><p>Un mismo cliente puede estar en varias carteras: su cuenta de puntos es única. El acceso de tu cuenta está limitado a los equipos que Alejandro te ha asignado.</p></details></footer>
+  </main>
+ </div>
+ <dialog id="message-dialog" aria-labelledby="message-title"><div class="dialog-heading"><div><span class="eyebrow">WHATSAPP POR VENDEDOR</span><h2 id="message-title">Mensajes preparados</h2></div><button type="button" id="close-message" class="icon-button" aria-label="Cerrar mensaje">×</button></div><p id="message-meta" class="muted small"></p><label for="message-part" class="small">Parte del listado<select id="message-part"></select></label><div class="message-navigation"><button type="button" id="message-prev" class="secondary">Anterior</button><output id="message-position"></output><button type="button" id="message-next" class="secondary">Siguiente</button></div><label for="message-text" class="small">Texto para copiar y enviar</label><textarea readonly id="message-text" rows="12"></textarea><div class="dialog-actions"><button type="button" class="primary" id="copy-message">Copiar mensaje</button></div><p id="copy-status" role="status" class="small muted"></p><p id="copied-count" class="small muted"></p><p class="small muted">El seguimiento de puntos se actualiza con la BD, sin confirmar envíos.</p></dialog>
+</body>
+</html>
