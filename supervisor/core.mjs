@@ -46,7 +46,6 @@ export function generateMessage({seller,rows,meta,filters={}}){
   if(c.gap==null)out.push('Avance de cuota sin dato oficial; revisar.');
   else if(c.gap>0){
    out.push(`Compra: ${money(c.advance)} / cuota ${money(c.quota)}.`,`Faltan *${money(c.gap)}*.`);
-   if(c.requiredDaily!=null&&c.remainingDays>0)out.push(`Requerido: *${money(c.requiredDaily)}/día* · ${c.remainingDays} días calendario.`);
    if(c.basePointsAtQuota!=null)out.push(`*${points(c.basePointsAtQuota)} base si cierra cuota Oct.*`);
   }else out.push(`Cuota Oct. alcanzada · ${points(c.reportedPoints)} reportados en el nuevo ciclo.`);
   out.push('');

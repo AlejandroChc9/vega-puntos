@@ -1,7 +1,7 @@
 import {SupervisorSession} from './protected-session.js';
 import {createProtectedApi} from './protected-api.js';
 const session=new SupervisorSession(),$=s=>document.querySelector(s);let started=false,checking=false;
-function lock(message){$('.app-layout').hidden=true;$('#message-dialog').close();$('#clients').replaceChildren();$('#tracking-clients').replaceChildren();$('#message-text').value='';$('#auth-panel').hidden=false;$('#auth-message').textContent=message;$('#logout').hidden=true;$('#reload').hidden=true;delete globalThis.vpSupervisorApi;}
+function lock(message){$('.app-layout').hidden=true;$('#message-dialog').close();$('#clients').replaceChildren();$('#message-text').value='';$('#auth-panel').hidden=false;$('#auth-message').textContent=message;$('#logout').hidden=true;$('#reload').hidden=true;delete globalThis.vpSupervisorApi;}
 async function enter(){await session.manifest();globalThis.vpSupervisorApi=createProtectedApi(session);$('#auth-panel').hidden=true;$('.app-layout').hidden=false;$('#logout').hidden=false;$('#reload').hidden=false;if(!started){started=true;await import('./app.js');}else location.reload();}
 $('#auth-form').addEventListener('submit',async e=>{e.preventDefault();$('#auth-submit').disabled=true;$('#auth-message').textContent='Verificando tu acceso…';try{await session.login($('#auth-email').value.trim(),$('#auth-password').value);await enter();}catch(e){lock(e.message);}finally{$('#auth-password').value='';$('#auth-submit').disabled=false;}});
 $('#logout').addEventListener('click',async()=>{lock('Sesión cerrada.');await session.logout();location.reload();});
