@@ -2,6 +2,11 @@ import {formatPoints} from './point-format.js';
 export const normal=v=>String(v??'').trim().replace(/^0+(?=\d)/,'');
 export const money=v=>v==null?'Sin dato':'S/ '+Number(v).toLocaleString('es-PE',{minimumFractionDigits:0,maximumFractionDigits:2});
 export const points=formatPoints;
+export const advancePercent=c=>Number.isFinite(c.advance)&&Number.isFinite(c.quota)&&c.quota>0?Math.round(c.advance/c.quota*10000)/100:null;
+export function portfolioSummary(rows){
+ const all=[...new Map(rows.map(c=>[normal(c.code),c])).values()],known=all.filter(c=>Number.isFinite(c.points?.remaining));
+ return {uniqueClients:all.length,pointsClients:all.filter(c=>c.points?.remaining>0).length,remainingReported:!all.length?0:known.length?Math.round(known.reduce((n,c)=>n+Math.max(0,c.points.remaining),0)*10000)/10000:null,missingPointsClients:all.length-known.length};
+}
 export function at(snapshots,cut){return snapshots.filter(s=>s.cut<=cut).at(-1)??null;}
 export function currentAccount(catalog,history,key){
  const a=catalog.accounts[normal(key)];if(!a)return null;
@@ -9,12 +14,12 @@ export function currentAccount(catalog,history,key){
  const projectionPct=Number.isFinite(a.projectedPurchase)&&Number.isFinite(a.quota)&&a.quota>0?Math.round(a.projectedPurchase/a.quota*10000)/100:null;
  const [year,month,day]=sales.cut.split('-').map(Number),remainingDays=new Date(Date.UTC(year,month,0)).getUTCDate()-day;
  const daily={requiredDaily:a.quota!=null&&s?.[0]!=null?(a.requiredDaily??null):null,remainingDays};
- return {...a,...daily,projectionPct,basePointsAtQuota:Number.isFinite(a.quota)&&a.quota>0?Math.floor(a.quota/100):null,advance:s?.[0]??null,reportedPoints:s?.[1]??null,points:p?{earned:p[0],used:p[1],remaining:p[2]}:null,salesCut:sales.cut,pointsCut:point.cut,salesHash:sales.sha256,pointsHash:point.sha256,cycle:sales.cycle,pointsCycle:point.cycle,balanceConfirmed:false,gap:a.quota==null||s?.[0]==null?null:Math.max(0,a.quota-s[0])};
+ return {...a,...daily,projectionPct,advancePct:advancePercent({advance:s?.[0]??null,quota:a.quota}),basePointsAtQuota:Number.isFinite(a.quota)&&a.quota>0?Math.floor(a.quota/100):null,advance:s?.[0]??null,reportedPoints:s?.[1]??null,points:p?{earned:p[0],used:p[1],remaining:p[2]}:null,salesCut:sales.cut,pointsCut:point.cut,salesHash:sales.sha256,pointsHash:point.sha256,cycle:sales.cycle,pointsCycle:point.cycle,balanceConfirmed:false,gap:a.quota==null||s?.[0]==null?null:Math.max(0,a.quota-s[0])};
 }
 export function filterOpportunities(rows,{pointsOnly=false,minPct=null,maxPct=null,day=null}={}){
- if((minPct!=null&&(!Number.isFinite(minPct)||minPct<0||minPct>100))||(maxPct!=null&&(!Number.isFinite(maxPct)||maxPct<0||maxPct>100))||(minPct!=null&&maxPct!=null&&minPct>maxPct))throw Error('Rango de proyección inválido');
+ if((minPct!=null&&(!Number.isFinite(minPct)||minPct<0||minPct>100))||(maxPct!=null&&(!Number.isFinite(maxPct)||maxPct<0||maxPct>100))||(minPct!=null&&maxPct!=null&&minPct>maxPct))throw Error('Rango de avance inválido');
  if(day!=null&&(!Number.isInteger(day)||day<0||day>6))throw Error('Día de visita inválido');
- return rows.filter(c=>(!pointsOnly||c.points?.remaining>0)&&(minPct==null||(c.projectionPct!=null&&c.projectionPct>=minPct))&&(maxPct==null||(c.projectionPct!=null&&c.projectionPct<=maxPct))&&(day==null||c.days?.includes(day)));
+ return rows.filter(c=>{const pct=advancePercent(c);return (!pointsOnly||c.points?.remaining>0)&&(minPct==null||(pct!=null&&pct>=minPct))&&(maxPct==null||(pct!=null&&pct<=maxPct))&&(day==null||c.days?.includes(day));});
 }
 export function difference(old,current){
  if(old.cycle!==current.cycle||old.pointsCycle!==current.pointsCycle)return {status:'cycle-changed',advance:null,used:null,balance:null,salesStatus:'cycle-changed',pointsStatus:'cycle-changed'};
@@ -37,7 +42,7 @@ export function generateMessage({seller,rows,meta,filters={}}){
  const add=c=>{
   out.push(`*${c.name} · ${c.code}*`);
   if(c.points?.remaining>0)out.push(`Saldo reportado: *${points(c.points.remaining)}*, equivalente a ${money(c.points.remaining)} de descuento si se confirma vigente.`);
-  if(c.projectionPct!=null)out.push(`Proyecta ${c.projectionPct.toLocaleString('es-PE',{maximumFractionDigits:2})}% de cuota.`);
+  const actual=advancePercent(c);if(actual!=null)out.push(`Avance ${actual.toLocaleString('es-PE',{maximumFractionDigits:2})}% de cuota.`);
   if(c.gap==null)out.push('Avance de cuota sin dato oficial; revisar.');
   else if(c.gap>0){
    out.push(`Compra: ${money(c.advance)} / cuota ${money(c.quota)}.`,`Faltan *${money(c.gap)}*.`);
@@ -47,7 +52,7 @@ export function generateMessage({seller,rows,meta,filters={}}){
   out.push('');
  };
  pending.forEach(add);if(rest.length){out.push('*AVANZAR HACIA LA CUOTA DE OCTUBRE*','');rest.forEach(add);}
- out.push('VP mostrados redondeados a enteros. Proyección estimada. VP al cierre: estimados, sujetos a validación y aún no disponibles. Compra válida con IGV. Canje hasta 50% de la compra elegible. No participan P&G, arroz/azúcar a granel ni Panetón Vega.');
+ out.push('VP mostrados redondeados a enteros. VP al cierre: estimados, sujetos a validación y aún no disponibles. Compra válida con IGV. Canje hasta 50% de la compra elegible. No participan P&G, arroz/azúcar a granel ni Panetón Vega.');
  return out.join('\n');
 }
 export function capture(a){return {code:a.code,name:a.name,quota:a.quota,advance:a.advance,projectedPurchase:a.projectedPurchase??null,projectionPct:a.projectionPct??null,requiredDaily:a.requiredDaily??null,remainingDays:a.remainingDays??null,basePointsAtQuota:a.basePointsAtQuota??null,reportedPoints:a.reportedPoints,points:a.points,salesCut:a.salesCut,pointsCut:a.pointsCut,salesHash:a.salesHash,pointsHash:a.pointsHash,cycle:a.cycle,pointsCycle:a.pointsCycle,gap:a.gap};}
